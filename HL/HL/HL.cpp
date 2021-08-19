@@ -58,7 +58,7 @@ class App : public InvisionHL
 		//quad = Mesh::CreatePyramid(instance, 1, 2, 1);// Mesh(instance, vertices, indices);
 
 		quad = Mesh::CreateCube(instance, 1, 1, 1);
-		quad2 = Mesh::CreatePyramid(instance, 1, 1, 1);
+		quad2 = Mesh::CreatePyramid(instance, 2, 1, 1);
 
 		view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		proj = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, 10.0f);
@@ -71,13 +71,7 @@ class App : public InvisionHL
 		instance.UpdateLight(light, lgtIndex);
 
 		
-		quad.SetModelMatrix(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-		//quad.SetModelMatrix(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-		quad.UpdateUniform(instance, quad.GetModelMatrix());
-
-		//quad2.SetModelMatrix(glm::mat4(1.0f));
-		quad2.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f)));
-		quad2.UpdateUniform(instance, quad2.GetModelMatrix());
+		
 
 		
 
@@ -111,18 +105,26 @@ class App : public InvisionHL
 
 		//lineWidth2.SetModelMatrix(glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
 		//lineWidth2.UpdateUniform(instance, lineWidth2.GetModelMatrix());
+
+		quad.SetModelMatrix(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+		quad.UpdateUniform(instance, quad.GetModelMatrix());
+
+		quad2.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f)));
+		quad2.UpdateUniform(instance, quad2.GetModelMatrix());
+
 	}
 
 
 private:
 	Mesh quad;
+	Mesh quad2;
 	
 	Light light;
 
 	glm::mat4 view;
 	glm::mat4 proj;
 
-	Mesh quad2;
+	
 };
 
 

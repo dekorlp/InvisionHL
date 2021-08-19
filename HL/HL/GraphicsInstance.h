@@ -72,20 +72,19 @@ class GraphicsInstance
 			return renderPass;
 		}
 
-		std::shared_ptr <Invision::IUniformBuffer> GetGeneralUniformBufferObject()
-		{
-			return mGenUniformBuffer;
-		}
-
-		std::shared_ptr <Invision::IUniformBuffer> GetGeometryUniformBufferObject()
-		{
-			return mGeometryUniformBuffer;
-		}
-			
-
 		std::shared_ptr <Invision::ICommandBuffer> GetCommandBuffer()
 		{
 			return commandBuffer;
+		}
+
+		GeneralUbo GetGeneralUbo()
+		{
+			return mGUbo;
+		}
+
+		LightUbo GetLightUbo()
+		{
+			return mLightUbo;
 		}
 
 	private:
@@ -99,9 +98,6 @@ class GraphicsInstance
 		std::shared_ptr <Invision::IRenderPass> renderPass;
 		std::shared_ptr <Invision::IFramebuffer> framebuffer;
 		std::shared_ptr <Invision::ICommandBuffer> commandBuffer;
-
-		std::shared_ptr <Invision::IUniformBuffer> mGenUniformBuffer;
-		std::shared_ptr <Invision::IUniformBuffer> mGeometryUniformBuffer;
 
 		GeneralUbo mGUbo;
 		LightUbo mLightUbo;
@@ -138,17 +134,6 @@ public:
 		int test = 0;
 		mParentAddr = &parentAddr;
 	}
-
-	std::shared_ptr <Invision::IUniformBuffer> GetGeneralUniformBufferObject()
-	{
-		return mParentAddr->GetGeneralUniformBufferObject();
-	}
-
-	std::shared_ptr <Invision::IUniformBuffer> GetGeometryUniformBufferObject()
-	{
-		return mParentAddr->GetGeometryUniformBufferObject();
-	}
-
 	std::shared_ptr <Invision::IGraphicsInstance> GetGraphicsInstance()
 	{
 		return mParentAddr->GetGraphicsInstance();
@@ -172,6 +157,16 @@ public:
 	void UpdateLight(Light& light, LightIndex lightIndex)
 	{
 		mParentAddr->UpdateLight(light, lightIndex);
+	}
+
+	GeneralUbo GetGeneralUbo()
+	{
+		return mParentAddr->GetGeneralUbo();
+	}
+
+	LightUbo GetLightUbo()
+	{
+		return mParentAddr->GetLightUbo();
 	}
 
 	void BindMesh(Mesh &mesh);

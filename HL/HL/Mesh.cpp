@@ -33,26 +33,41 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 
 	indexBuffer->CreateIndexBuffer(sizeof(indices[0]) * indices.size(), indices.data());
 
+	// Create Uniform Buffer
+	mGenUniformBuffer = graphicsInstance->CreateUniformBuffer();
+	mGenUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
+		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo))
+		.CreateUniformBinding(0, 2, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(LightUbo)).CreateUniformBuffer();
+
+	mGeometryUniformBuffer = graphicsInstance->CreateUniformBuffer();
+	mGeometryUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_GEOMETRY_BIT, sizeof(UniformBufferObject))
+		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_GEOMETRY_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
+
 	auto vertShaderCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/vert.spv");
 	auto fragShaderCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/frag.spv");
-	pipeline->AddUniformBuffer(instance.GetGeneralUniformBufferObject());
+	pipeline->AddUniformBuffer(mGenUniformBuffer);
 	pipeline->AddShader(vertShaderCode, Invision::SHADER_STAGE_VERTEX_BIT);
 	pipeline->AddShader(fragShaderCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
 	pipeline->AddVertexDescription(verBindingDescr);
 	pipeline->CreatePipeline(instance.GetRenderPass());
 	isIndexed = true;
 
+
 	// Create geometry Shader Pipeline
 	auto vertShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.vert.spv");
 	auto geomShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.geom.spv");
 	auto fragShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.frag.spv");
 	geomPipeline = graphicsInstance->CreatePipeline(&Invision::PipelineProperties(Invision::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, Invision::POLYGON_MODE_FILL, Invision::CULL_MODE_FRONT_BIT, Invision::FRONT_FACE_COUNTER_CLOCKWISE, 1.0f));
-	geomPipeline->AddUniformBuffer(instance.GetGeometryUniformBufferObject());
+	geomPipeline->AddUniformBuffer(mGeometryUniformBuffer);
 	geomPipeline->AddShader(vertShaderNormalCode, Invision::SHADER_STAGE_VERTEX_BIT);
 	geomPipeline->AddShader(geomShaderNormalCode, Invision::SHADER_STAGE_GEOMETRY_BIT);
 	geomPipeline->AddShader(fragShaderNormalCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
 	geomPipeline->AddVertexDescription(verBindingDescr);
 	geomPipeline->CreatePipeline(instance.GetRenderPass());
+
+
+	
+
 }
 
 void Mesh::UpdateUniform(DrawingInstance& instance, glm::mat4 modelMatrix)
@@ -60,8 +75,11 @@ void Mesh::UpdateUniform(DrawingInstance& instance, glm::mat4 modelMatrix)
 	UniformBufferObject ubo = {};
 	ubo.model = modelMatrix;
 
-	instance.GetGeneralUniformBufferObject()->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
-	instance.GetGeometryUniformBufferObject()->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
+	mGenUniformBuffer->UpdateUniform(&instance.GetGeneralUbo(), sizeof(instance.GetGeneralUbo()), 0, 1);
+	mGenUniformBuffer->UpdateUniform(&instance.GetLightUbo(), sizeof(instance.GetLightUbo()), 0, 2);
+	mGeometryUniformBuffer->UpdateUniform(&instance.GetGeneralUbo(), sizeof(instance.GetGeneralUbo()), 0, 1);
+	mGenUniformBuffer->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
+	mGeometryUniformBuffer->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
 }
 
 void Mesh::SetModelMatrix(glm::mat4 model)

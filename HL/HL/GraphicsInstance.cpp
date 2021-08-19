@@ -31,15 +31,6 @@ void GraphicsInstance::Init(HWND hwnd, int width, int height)
 
 		renderer = graphicsInstance->CreateRenderer();
 
-		mGenUniformBuffer = graphicsInstance->CreateUniformBuffer();
-		mGenUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
-			.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo) )
-			.CreateUniformBinding(0, 2, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(LightUbo)).CreateUniformBuffer();
-
-		mGeometryUniformBuffer = graphicsInstance->CreateUniformBuffer();
-		mGeometryUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_GEOMETRY_BIT, sizeof(UniformBufferObject))
-			.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_GEOMETRY_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
-
 	}
 	catch (std::runtime_error& err) {
 		std::stringstream ss;
@@ -83,10 +74,10 @@ bool GraphicsInstance::PrepareFrame(const int width, const int height)
 
 void GraphicsInstance::Render()
 {
-	mGenUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
-	mGenUniformBuffer->UpdateUniform(&mLightUbo, sizeof(mLightUbo), 0, 2);
+	//mGenUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
+	//mGenUniformBuffer->UpdateUniform(&mLightUbo, sizeof(mLightUbo), 0, 2);
 
-	mGeometryUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
+	//mGeometryUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
 
 	renderer->Draw(commandBuffer);
 }
@@ -165,7 +156,7 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 	{
 		commandBuffer->BindPipeline(mesh.GetPipeline()).
 			BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
-			BindDescriptorSets(GetGeneralUniformBufferObject(), mesh.GetPipeline()).
+			BindDescriptorSets(mesh.GetGeneralUniformBufferObject(), mesh.GetPipeline()).
 			BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32).
 			//Draw(static_cast<uint32_t>(vertices.size()), 1, 0, 0).
 			DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
@@ -174,7 +165,7 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 
 		commandBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
 		commandBuffer->BindPipeline(mesh.GetGeomPipeline());
-		commandBuffer->BindDescriptorSets(GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
+		commandBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
 		commandBuffer->DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
 #endif
 	}
@@ -182,7 +173,7 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 	{
 		commandBuffer->BindPipeline(mesh.GetPipeline()).
 			BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
-			BindDescriptorSets(GetGeneralUniformBufferObject(), mesh.GetPipeline()).
+			BindDescriptorSets(mesh.GetGeneralUniformBufferObject(), mesh.GetPipeline()).
 			//Draw(static_cast<uint32_t>(vertices.size()), 1, 0, 0).
 			Draw(static_cast<uint32_t>(mesh.GetVertizes().size()), 1, 0);
 
@@ -190,7 +181,7 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 
 		commandBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
 		commandBuffer->BindPipeline(mesh.GetGeomPipeline());
-		commandBuffer->BindDescriptorSets(GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
+		commandBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
 		commandBuffer->Draw(static_cast<uint32_t>(mesh.GetVertizes().size()), 1, 0);
 #endif
 	}
