@@ -60,6 +60,8 @@ class App : public InvisionHL
 		quad = Mesh::CreateCube(instance, 1, 1, 1);
 		quad2 = Mesh::CreatePyramid(instance, 2, 1, 1);
 
+		quad.AddChildMesh(quad2);
+
 		view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		proj = glm::perspective(glm::radians(45.0f), width / (float)height, 0.1f, 10.0f);
 		proj[1][1] *= -1;
@@ -69,21 +71,12 @@ class App : public InvisionHL
 		LightIndex lgtIndex = instance.AddLight(light);
 		light.SetStrength(8);
 		instance.UpdateLight(light, lgtIndex);
-
-		
-		
-
-		
-
-		//quad = Mesh(instance, vertices, indices);
 	}
 
 	void Init(DrawingInstance& instance) override
 	{
 		instance.BindMesh(quad);
-		instance.BindMesh(quad2);
-		//instance.BindMesh(lineWidth2);
-		
+		instance.BindMesh(quad2);		
 	}
 
 	void Destroy() override
@@ -106,11 +99,14 @@ class App : public InvisionHL
 		//lineWidth2.SetModelMatrix(glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
 		//lineWidth2.UpdateUniform(instance, lineWidth2.GetModelMatrix());
 
-		quad.SetModelMatrix(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-		quad.UpdateUniform(instance, quad.GetModelMatrix());
-
+		
+		// chield
 		quad2.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f)));
 		quad2.UpdateUniform(instance, quad2.GetModelMatrix());
+
+		// parent
+		quad.SetModelMatrix(glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+		quad.UpdateUniform(instance, quad.GetModelMatrix());
 
 	}
 

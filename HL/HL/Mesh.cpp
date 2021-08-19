@@ -72,6 +72,14 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 
 void Mesh::UpdateUniform(DrawingInstance& instance, glm::mat4 modelMatrix)
 {
+	// update child meshes
+	for (unsigned int i = 0; i < mChildMeshes.size(); i++)
+	{
+		
+		mChildMeshes[i]->UpdateUniform(instance, mChildMeshes[i]->GetModelMatrix() * modelMatrix);
+	}
+	
+	// update current mesh
 	UniformBufferObject ubo = {};
 	ubo.model = modelMatrix;
 

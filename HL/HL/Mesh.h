@@ -63,6 +63,11 @@ public:
 	static Mesh CreatePlane(DrawingInstance& instance, float width, float depth);
 	static Mesh CreateGrid(DrawingInstance& instance, float width, float depth, unsigned int m, unsigned int n, float lineWidth = 1.0f);
 
+	void AddChildMesh(Mesh& mesh)
+	{
+		mChildMeshes.push_back(&mesh);
+	}
+
 	std::shared_ptr <Invision::IUniformBuffer> GetGeneralUniformBufferObject()
 	{
 		return mGenUniformBuffer;
@@ -80,6 +85,8 @@ private:
 	std::vector<Index> mIndizes;
 	bool isIndexed;
 	glm::mat4 mModelMat;
+
+	std::vector<Mesh*> mChildMeshes;
 
 	std::shared_ptr <Invision::IUniformBuffer> mGenUniformBuffer;
 	std::shared_ptr <Invision::IUniformBuffer> mGeometryUniformBuffer;
