@@ -75,8 +75,8 @@ void Mesh::UpdateUniform(DrawingInstance& instance, glm::mat4 modelMatrix)
 	// update child meshes
 	for (unsigned int i = 0; i < mChildMeshes.size(); i++)
 	{
-		
-		mChildMeshes[i]->UpdateUniform(instance, mChildMeshes[i]->GetModelMatrix() * modelMatrix);
+		mChildMeshes[i]->SetModelMatrix(mChildMeshes[i]->GetModelMatrix() * modelMatrix);
+		mChildMeshes[i]->UpdateUniform(instance, mChildMeshes[i]->GetModelMatrix());
 	}
 	
 	// update current mesh
