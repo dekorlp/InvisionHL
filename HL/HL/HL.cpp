@@ -233,7 +233,7 @@ class App : public InvisionHL
 		leftFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f)));
 		leftFeet.UpdateUniform(instance, leftFeet.GetModelMatrix());
 
-		rightFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.5f)));
+		rightFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)));
 		rightFeet.UpdateUniform(instance, rightFeet.GetModelMatrix());
 
 		bottomCylinder.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 1.5f)));

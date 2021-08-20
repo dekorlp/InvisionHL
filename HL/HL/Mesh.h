@@ -66,6 +66,7 @@ public:
 	void AddChildMesh(Mesh& mesh)
 	{
 		mChildMeshes.push_back(&mesh);
+		mesh.SetParent(*this);
 	}
 
 	std::shared_ptr <Invision::IUniformBuffer> GetGeneralUniformBufferObject()
@@ -78,6 +79,11 @@ public:
 		return mGeometryUniformBuffer;
 	}
 
+	void SetParent(Mesh& mesh)
+	{
+		this->parent = &mesh;
+	}
+
 
 
 private:
@@ -87,6 +93,7 @@ private:
 	glm::mat4 mModelMat;
 
 	std::vector<Mesh*> mChildMeshes;
+	Mesh* parent = nullptr;
 
 	std::shared_ptr <Invision::IUniformBuffer> mGenUniformBuffer;
 	std::shared_ptr <Invision::IUniformBuffer> mGeometryUniformBuffer;
