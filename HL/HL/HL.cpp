@@ -164,14 +164,14 @@ class App : public InvisionHL
 
 		//quad.AddChildMesh(quad2);
 
-		plane = Mesh::CreatePlane(instance, 20.0f, 20.0f);
-		leftFeet = Mesh::CreatePyramid(instance, 1.0, 0.5, 4.0);
-		rightFeet = Mesh::CreatePyramid(instance, 1.0, 0.5, 4.0);
-		bottomCylinder = Mesh::CreateCylinder(instance, 1.5, 2.0, 1.0, 100, 100);
-		bodyCylinder = Mesh::CreateCylinder(instance, 2.0, 2.0, 8.0, 100, 100);
-		topCylinder = Mesh::CreateCylinder(instance, 2.0, 1.5, 1.0, 100, 100);
-		head = Mesh::CreateSphere(instance, 2.0f, 50, 50);
-		nose = Mesh::CreateCylinder(instance, 0.5, 0.0, 4.0, 100, 100);
+		plane = Mesh::CreatePlane(instance, 20.0f, 20.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+		leftFeet = Mesh::CreatePyramid(instance, 1.0, 0.5, 4.0, glm::vec3(1.0f, 0.0f, 0.0f));
+		rightFeet = Mesh::CreatePyramid(instance, 1.0, 0.5, 4.0, glm::vec3(1.0f, 0.0f, 0.0f));
+		bottomCylinder = Mesh::CreateCylinder(instance, 1.5, 2.0, 1.0, 100, 100, glm::vec3(1.0f, 0.0f, 0.0f));
+		bodyCylinder = Mesh::CreateCylinder(instance, 2.0, 2.0, 8.0, 100, 100, glm::vec3(1.0f, 0.0f, 0.0f));
+		topCylinder = Mesh::CreateCylinder(instance, 2.0, 1.5, 1.0, 100, 100, glm::vec3(1.0f, 0.0f, 0.0f));
+		head = Mesh::CreateSphere(instance, 2.0f, 50, 50, glm::vec3(1.0f, 1.0f, 1.0f));
+		nose = Mesh::CreateCylinder(instance, 0.5, 0.0, 4.0, 100, 100, glm::vec3(1.0f, 1.0f, 1.0f));
 		leftHand = Mesh(instance, vertices, indices);
 		rightHand = Mesh(instance, vertices, indices);
 		

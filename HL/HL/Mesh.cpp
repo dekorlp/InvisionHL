@@ -150,7 +150,7 @@ std::shared_ptr<Invision::IIndexBuffer> Mesh::GetIndexBuffer()
 	return indexBuffer;
 } 
 
-Mesh Mesh::CreateCube(DrawingInstance& instance, float width, float height, float depth)
+Mesh Mesh::CreateCube(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color)
 {
 	// https://github.com/jjuiddong/Introduction-to-3D-Game-Programming-With-DirectX11/blob/master/Common/GeometryGenerator.cpp#L26
 
@@ -186,40 +186,40 @@ Mesh Mesh::CreateCube(DrawingInstance& instance, float width, float height, floa
 
 	const std::vector<Vertex> vertices = {
 		// BOTTOM
-		{ { -width, +height, -depth },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f}, {1.0f, 0.0f} , {-1.0f, 0.0f, 0.0f} }, //0
-		{ { width,  height, -depth },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}}, //1
-		{ { -width, -height, -depth },{ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f} }, //2
-		{ { width, -height, -depth },{ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}, {-1.0f, 0.0f, 0.0f} }, //3
+		{ { -width, +height, -depth }, color, { 0.0f, 0.0f, -1.0f}, {1.0f, 0.0f} , {-1.0f, 0.0f, 0.0f} }, //0
+		{ { width,  height, -depth }, color, { 0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}}, //1
+		{ { -width, -height, -depth }, color, { 0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f} }, //2
+		{ { width, -height, -depth }, color, { 0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}, {-1.0f, 0.0f, 0.0f} }, //3
 
 		//TOP
-		{ { -width, +height, +depth },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}, {1.0f, 0.0f, 0.0f} }, //4 
-		{ { width,  height, +depth },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}, {1.0f, 0.0f, 0.0f} }, //5
-		{ { -width, -height, +depth },{ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} }, //6
-		{ { width, -height, +depth },{ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f, 0.0f} }, //7
+		{ { -width, +height, +depth },color, { 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}, {1.0f, 0.0f, 0.0f} }, //4 
+		{ { width,  height, +depth },color, { 0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}, {1.0f, 0.0f, 0.0f} }, //5
+		{ { -width, -height, +depth },color, { 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} }, //6
+		{ { width, -height, +depth },color, { 0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f, 0.0f} }, //7
 
 		// FRONT
-		{ { -width,  +height, +depth, },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f} }, //8
-		{ { width,  +height, depth },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f} }, //9
-		{ { -width,  +height , -depth },{ 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f} }, //10
-		{ { width,  +height , -depth },{ 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}, {-1.0f, 0.0f, 0.0f} }, //11
+		{ { -width,  +height, +depth, },color, { 0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f} }, //8
+		{ { width,  +height, depth },color, { 0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f} }, //9
+		{ { -width,  +height , -depth },color, { 0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f} }, //10
+		{ { width,  +height , -depth },color, { 0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}, {-1.0f, 0.0f, 0.0f} }, //11
 
 		// BACK
-		{ { -width,  -height, +depth, },{ 0.0f, 0.0f, 1.0f }, { 0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}, {1.0f, 0.0f, 0.0f} }, //12
-		{ { width,  -height, depth },{ 0.0f, 0.0f, 1.0f }, { 0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 0.0f, 0.0f} }, //13
-		{ { -width,  -height , -depth },{ 1.0f, 1.0f, 1.0f }, { 0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} }, //14
-		{ { width,  -height , -depth },{ 1.0f, 1.0f, 1.0f }, { 0.0f, -1.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f, 0.0f} }, //15
+		{ { -width,  -height, +depth, },color, { 0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}, {1.0f, 0.0f, 0.0f} }, //12
+		{ { width,  -height, depth },color, { 0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 0.0f, 0.0f} }, //13
+		{ { -width,  -height , -depth },color, { 0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f} }, //14
+		{ { width,  -height , -depth },color, { 0.0f, -1.0f, 0.0f}, {1.0f, 1.0f}, {1.0f, 0.0f, 0.0f} }, //15
 
 		// LSIDE
-		{ { width,  height, +depth, },{ 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 1.0f, 0.0f} }, //16
-		{ { width,  -height, depth },{ 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 1.0f, 0.0f} }, //17
-		{ { width,  height , -depth },{ 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f, 0.0f} }, //18
-		{ { width,  -height , -depth },{ 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, 1.0f, 0.0f} }, //19
+		{ { width,  height, +depth, },color, { 1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 1.0f, 0.0f} }, //16
+		{ { width,  -height, depth },color, { 1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 1.0f, 0.0f} }, //17
+		{ { width,  height , -depth },color, { 1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f, 0.0f} }, //18
+		{ { width,  -height , -depth },color, { 1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, 1.0f, 0.0f} }, //19
 
 		// RSIDE
-		{ { -width,  height, +depth, },{ 0.0f, 0.0f, 1.0f }, { -1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, -1.0f, 0.0f} }, //20
-		{ { -width,  -height, depth },{ 0.0f, 0.0f, 1.0f }, { -1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, -1.0f, 0.0f} }, //21
-		{ { -width,  height , -depth },{ 1.0f, 1.0f, 1.0f }, { -1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, -1.0f, 0.0f} }, //22
-		{ { -width,  -height , -depth },{ 1.0f, 1.0f, 1.0f }, { -1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, -1.0f, 0.0f} }, //23
+		{ { -width,  height, +depth, },color, { -1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, -1.0f, 0.0f} }, //20
+		{ { -width,  -height, depth },color, { -1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, -1.0f, 0.0f} }, //21
+		{ { -width,  height , -depth },color, { -1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, -1.0f, 0.0f} }, //22
+		{ { -width,  -height , -depth },color, { -1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, -1.0f, 0.0f} }, //23
 	};
 
 	
@@ -227,7 +227,7 @@ Mesh Mesh::CreateCube(DrawingInstance& instance, float width, float height, floa
 	return Mesh(instance, vertices, indices);
 }
 
-Mesh Mesh::CreatePyramid(DrawingInstance& instance, float width, float height, float depth)
+Mesh Mesh::CreatePyramid(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color)
 {
 	width = width * 0.5f;
 	height = height * 0.5f;
@@ -235,29 +235,29 @@ Mesh Mesh::CreatePyramid(DrawingInstance& instance, float width, float height, f
 
 	const std::vector<Vertex> vertices = {
 		// BACK
-		{ { -width, +depth, -height },{ 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}, {-1.0, 0.0f, 0.0f} },
-		{ { +width, +depth, -height },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}, {-1.0, 0.0f, 0.0f} },
-		{ { +0,     +0,     +height },{ 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}, {-1.0, 0.0f, 0.0f} },
+		{ { -width, +depth, -height },color, { 0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}, {-1.0, 0.0f, 0.0f} },
+		{ { +width, +depth, -height },color, { 0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}, {-1.0, 0.0f, 0.0f} },
+		{ { +0,     +0,     +height },color, { 0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}, {-1.0, 0.0f, 0.0f} },
 		// FRONT
-		{ { -width, -depth, -height },{ 1.0f, 0.0f, 0.0f }, { 0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}, {1.0, 0.0f, 0.0f} },
-		{ { width, -depth, -height },{ 1.0f, 0.0f, 0.0f }, { 0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}, {1.0, 0.0f, 0.0f} },
-		{ { +0,    +0,     +height },{ 1.0f, 0.0f, 0.0f }, { 0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}, {1.0, 0.0f, 0.0f} },
+		{ { -width, -depth, -height },color, { 0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}, {1.0, 0.0f, 0.0f} },
+		{ { width, -depth, -height },color, { 0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}, {1.0, 0.0f, 0.0f} },
+		{ { +0,    +0,     +height },color, { 0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}, {1.0, 0.0f, 0.0f} },
 
 		// LEFT
-		{ { -width, +depth, -height },{ 1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0, -1.0f, 0.0f} },
-		{ { -width, -depth, -height },{ 1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, -1.0f, 0.0f} },
-		{ { +0,     +0,     +height },{ 1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0, -1.0f, 0.0f} },
+		{ { -width, +depth, -height },color, { -1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0, -1.0f, 0.0f} },
+		{ { -width, -depth, -height },color, { -1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, -1.0f, 0.0f} },
+		{ { +0,     +0,     +height },color, { -1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0, -1.0f, 0.0f} },
 
 		// RIGHT
-		{ { +width, +depth, -height },{ 0.0f, 0.0f, 1.0f }, { +1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0, 1.0f, 0.0f} },
-		{ { +width, -depth, -height },{ 1.0f, 0.0f, 0.0f }, { +1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, 1.0f, 0.0f} },
-		{ { +0,     +0,     +height },{ 1.0f, 0.0f, 0.0f }, { +1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0, 1.0f, 0.0f} },
+		{ { +width, +depth, -height },color, { +1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0, 1.0f, 0.0f} },
+		{ { +width, -depth, -height },color, { +1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, 1.0f, 0.0f} },
+		{ { +0,     +0,     +height },color, { +1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0, 1.0f, 0.0f} },
 
 		// BOTTOM
-		{ { -width, +depth, -height },{ 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}, {-1.0, 0.0f, 0.0f} },
-		{ { +width, +depth, -height },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}, {-1.0, 0.0f, 0.0f} },
-		{ { +width, -depth, -height },{ 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f}, {1.0f, 0.0f}, {-1.0, 0.0f, 0.0f} },
-		{ { -width, -depth, -height },{ 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}, {-1.0, 0.0f, 0.0f} },
+		{ { -width, +depth, -height },color, { 0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}, {-1.0, 0.0f, 0.0f} },
+		{ { +width, +depth, -height },color, { 0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}, {-1.0, 0.0f, 0.0f} },
+		{ { +width, -depth, -height },color, { 0.0f, 0.0f, -1.0f}, {1.0f, 0.0f}, {-1.0, 0.0f, 0.0f} },
+		{ { -width, -depth, -height },color, { 0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}, {-1.0, 0.0f, 0.0f} },
 	};
 
 	const std::vector<uint32_t> indices = {
@@ -282,7 +282,7 @@ Mesh Mesh::CreatePyramid(DrawingInstance& instance, float width, float height, f
 	return Mesh(instance, vertices, indices);
 }
 
-Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float topRadius, float height, uint32_t sliceCount, uint32_t stackCount)
+Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float topRadius, float height, uint32_t sliceCount, uint32_t stackCount, glm::vec3 color)
 {
 	// 3D Game Programming with DirectX 12 - P. 275ff 
 	std::vector<Vertex> vertices;
@@ -317,7 +317,7 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 			float dr = bottomRadius - topRadius;
 			glm::vec3 bitangent(dr*c, dr*s, height);
 
-			vertex.color = glm::vec3(1.0f, 0.0f, 0.0f);
+			vertex.color = color;
 			vertex.normal = glm::normalize(glm::cross(vertex.tangent, bitangent));
 
 			vertices.push_back(vertex);
@@ -360,13 +360,13 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 		vert.tex = glm::vec2(x, z);
 		vert.normal = glm::vec3(0.0, 0.0, 1.0);
 		vert.tangent = glm::vec3(1.0, 0.0, 0.0);
-		vert.color = glm::vec3(0.0f, 1.0f, 0.0f);
+		vert.color = color;
 
 		vertices.push_back(vert);
 	}
 	Vertex TopCenter;
 	TopCenter.position = glm::vec3(0.0f, 0.0f, y);
-	TopCenter.color = glm::vec3(0.0f, 1.0f, 0.0f);
+	TopCenter.color = color;
 	TopCenter.normal = glm::vec3(0.0, 0.0, 1.0);
 	TopCenter.tangent = glm::vec3(1.0, 0.0, 0.0);
 	TopCenter.tex = glm::vec2(0.5f, 0.5f);
@@ -393,7 +393,7 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 
 		Vertex vert;
 		vert.position = glm::vec3(x, z, -y);
-		vert.color = glm::vec3(0.0f, 1.0f, 0.0f);
+		vert.color = color;
 		vert.normal = glm::vec3(0.0f, 0.0f, -1.0f);
 		vert.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 		vert.tex = glm::vec2(u, v);
@@ -403,7 +403,7 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 
 	Vertex BottomCenter;
 	BottomCenter.position = glm::vec3(0.0f, 0.0f, -y);
-	BottomCenter.color = glm::vec3(0.0f, 1.0f, 0.0f);
+	BottomCenter.color = color;
 	BottomCenter.normal = glm::vec3(0.0f, 0.0f, -1.0f);
 	BottomCenter.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 	BottomCenter.tex = glm::vec2(0.5f, 0.5f);
@@ -421,7 +421,7 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 	return Mesh(instance, vertices, indices);
 }
 
-Mesh Mesh::CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t subDivisions)
+Mesh Mesh::CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t subDivisions, glm::vec3 color)
 {
 	// 3D Game Programming with DirectX 12 - P. 280f
 	// https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
@@ -459,7 +459,7 @@ Mesh Mesh::CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t sub
 	for (uint32_t i = 0; i < 12; ++i)
 	{
 		vertices[i].position = pos[i];
-		vertices[i].color = glm::vec3(1.0f, 0.0f, 0.0f);
+		vertices[i].color = color;
 	}
 
 	for (uint32_t i = 0; i < subDivisions; ++i)
@@ -495,7 +495,7 @@ Mesh Mesh::CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t sub
 	return Mesh(instance, vertices, indices);
 }
 
-Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int slices, unsigned int stacks)
+Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int slices, unsigned int stacks, glm::vec3 color)
 {
 	// https://github.com/jjuiddong/Introduction-to-3D-Game-Programming-With-DirectX11/blob/master/Common/GeometryGenerator.h
 	// https://github.com/jjuiddong/Introduction-to-3D-Game-Programming-With-DirectX11/blob/master/Common/GeometryGenerator.cpp
@@ -506,13 +506,13 @@ Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int sl
 	Vertex BottomVertex;
 
 	TopVertex.position = glm::vec3(0.0f, 0.0f, +radius);
-	TopVertex.color = glm::vec3(1.0f, 0.0f, 0.0f);
+	TopVertex.color = color;
 	TopVertex.normal = glm::vec3(0.0f, 0.0f, 1.0f);
 	TopVertex.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 	TopVertex.tex = glm::vec2(0.0f, 0.0f);
 
 	BottomVertex.position = glm::vec3(0.0f, 0.0f, -radius);
-	BottomVertex.color = glm::vec3(1.0f, 0.0f, 0.0f);
+	BottomVertex.color = color;
 	BottomVertex.normal = glm::vec3(0.0f, 0.0f, -1.0f);
 	BottomVertex.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 	BottomVertex.tex = glm::vec2(0.0f, 1.0f);
@@ -547,7 +547,7 @@ Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int sl
 			v.tex.x = theta / glm::pi<float>()/2;
 			v.tex.y = phi / glm::pi<float>();
 
-			v.color = glm::vec3(1.0f, 0.0f, 0.0f);
+			v.color = color;
 			vertices.push_back(v);
 		}
 	}
@@ -593,16 +593,16 @@ Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int sl
 	return Mesh(instance, vertices, indices);
 }
 
-Mesh Mesh::CreatePlane(DrawingInstance& instance, float width, float depth)
+Mesh Mesh::CreatePlane(DrawingInstance& instance, float width, float depth, glm::vec3 color)
 {
 	width = width * 0.5f;
 	depth = depth * 0.5f;
 
 	const std::vector<Vertex> vertices = {
-				{ { -width, -depth, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, {-1.0, 0.0f, 0.0f} },
-				{ { width, -depth, 0.0f },{ 0.0f, 1.0f, 0.0f },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, {-1.0, 0.0f, 0.0f} },
-				{ { width, depth, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, {-1.0, 0.0f, 0.0f} },
-				{ { -width, depth, 0.0f },{ 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, {-1.0, 0.0f, 0.0f} },
+				{ { -width, -depth, 0.0f },color, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, {-1.0, 0.0f, 0.0f} },
+				{ { width, -depth, 0.0f },color, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, {-1.0, 0.0f, 0.0f} },
+				{ { width, depth, 0.0f },color, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, {-1.0, 0.0f, 0.0f} },
+				{ { -width, depth, 0.0f },color, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, {-1.0, 0.0f, 0.0f} },
 	};
 
 	const std::vector<uint32_t> indices = {
@@ -613,7 +613,7 @@ Mesh Mesh::CreatePlane(DrawingInstance& instance, float width, float depth)
 	return Mesh(instance, vertices, indices);
 }
 
-Mesh Mesh::CreateGrid(DrawingInstance& instance, float width, float depth, unsigned int m, unsigned int n, float lineWidth)
+Mesh Mesh::CreateGrid(DrawingInstance& instance, float width, float depth, unsigned int m, unsigned int n, glm::vec3 color, float lineWidth)
 {
 	// 3D Game Programming with DirectX 12 - P. 302ff
 
@@ -642,7 +642,7 @@ Mesh Mesh::CreateGrid(DrawingInstance& instance, float width, float depth, unsig
 			float x = -halfWidth + j * dx;
 
 			vertices[i*n + j].position = glm::vec3(x, z, 0.0f);
-			vertices[i*n + j].color = glm::vec3(0.0f, 1.0f, 0.0f);
+			vertices[i*n + j].color = color;
 			vertices[i*n + j].normal = glm::vec3(0.0f, 0.0f, 1.0f);
 			vertices[i*n + j].tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 			vertices[i*n + j].tex = glm::vec2(j*du, i*dv);

@@ -55,13 +55,13 @@ public:
 	void SetModelMatrix(glm::mat4 model);
 	glm::mat4 GetModelMatrix();
 
-	static Mesh CreateCube(DrawingInstance& instance, float width, float height, float depth);
-	static Mesh CreatePyramid(DrawingInstance& instance, float width, float height, float depth);
-	static Mesh CreateCylinder(DrawingInstance& instance, float bottomRadius, float topRadius, float height, uint32_t sliceCount, uint32_t stackCount);
-	static Mesh CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t subDivisions);
-	static Mesh CreateSphere(DrawingInstance& instance, float radius, unsigned int stacks, unsigned int slices);
-	static Mesh CreatePlane(DrawingInstance& instance, float width, float depth);
-	static Mesh CreateGrid(DrawingInstance& instance, float width, float depth, unsigned int m, unsigned int n, float lineWidth = 1.0f);
+	static Mesh CreateCube(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color);
+	static Mesh CreatePyramid(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color);
+	static Mesh CreateCylinder(DrawingInstance& instance, float bottomRadius, float topRadius, float height, uint32_t sliceCount, uint32_t stackCount, glm::vec3 color);
+	static Mesh CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t subDivisions, glm::vec3 color);
+	static Mesh CreateSphere(DrawingInstance& instance, float radius, unsigned int stacks, unsigned int slices, glm::vec3 color);
+	static Mesh CreatePlane(DrawingInstance& instance, float width, float depth, glm::vec3 color);
+	static Mesh CreateGrid(DrawingInstance& instance, float width, float depth, unsigned int m, unsigned int n, glm::vec3 color, float lineWidth = 1.0f);
 
 	void AddChildMesh(Mesh& mesh)
 	{
