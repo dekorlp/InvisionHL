@@ -13,9 +13,11 @@ enum LightIndex {LIGHT_INDEX_ONE, LIGHT_INDEX_TWO, LIGHT_INDEX_THREE, LIGHT_INDE
 
 struct SLight
 {
+	
 	__declspec(align(16)) glm::vec4 position;
 	__declspec(align(16)) glm::vec4 color;
 	__declspec(align(16)) float strength;
+	__declspec(align(16)) glm::mat4 lightSpaceMatrix;
 	//__declspec(align(16)) float direction;
 	//__declspec(align(16)) float falloffStart;
 	//__declspec(align(16)) float falloffEnd;

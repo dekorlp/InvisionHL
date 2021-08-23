@@ -36,15 +36,14 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	// Create Uniform Buffer
 	mGenUniformBuffer = graphicsInstance->CreateUniformBuffer();
 	mGenUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
-		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo))
-		.CreateUniformBinding(0, 2, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(LightUbo)).CreateUniformBuffer();
+		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
 
 	mGeometryUniformBuffer = graphicsInstance->CreateUniformBuffer();
 	mGeometryUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_GEOMETRY_BIT, sizeof(UniformBufferObject))
 		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_GEOMETRY_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
 
-	auto vertShaderCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/vert.spv");
-	auto fragShaderCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/frag.spv");
+	auto vertShaderCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/gBuffer.vert.spv");
+	auto fragShaderCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/gBuffer.frag.spv");
 	pipeline->AddUniformBuffer(mGenUniformBuffer);
 	pipeline->AddShader(vertShaderCode, Invision::SHADER_STAGE_VERTEX_BIT);
 	pipeline->AddShader(fragShaderCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
@@ -53,7 +52,7 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	isIndexed = true;
 
 
-	// Create geometry Shader Pipeline
+	/*// Create geometry Shader Pipeline
 	auto vertShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.vert.spv");
 	auto geomShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.geom.spv");
 	auto fragShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.frag.spv");
@@ -63,7 +62,7 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	geomPipeline->AddShader(geomShaderNormalCode, Invision::SHADER_STAGE_GEOMETRY_BIT);
 	geomPipeline->AddShader(fragShaderNormalCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
 	geomPipeline->AddVertexDescription(verBindingDescr);
-	geomPipeline->CreatePipeline(instance.GetRenderPass());
+	geomPipeline->CreatePipeline(instance.GetRenderPass());*/
 
 
 	
@@ -95,7 +94,7 @@ void Mesh::UpdateUniform(DrawingInstance& instance, glm::mat4 modelMatrix)
 	
 
 	mGenUniformBuffer->UpdateUniform(&instance.GetGeneralUbo(), sizeof(instance.GetGeneralUbo()), 0, 1);
-	mGenUniformBuffer->UpdateUniform(&instance.GetLightUbo(), sizeof(instance.GetLightUbo()), 0, 2);
+	//mGenUniformBuffer->UpdateUniform(&instance.GetLightUbo(), sizeof(instance.GetLightUbo()), 0, 2);
 	mGeometryUniformBuffer->UpdateUniform(&instance.GetGeneralUbo(), sizeof(instance.GetGeneralUbo()), 0, 1);
 	mGenUniformBuffer->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
 	mGeometryUniformBuffer->UpdateUniform(&ubo, sizeof(ubo), 0, 0);

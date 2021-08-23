@@ -29,6 +29,75 @@ void GraphicsInstance::Init(HWND hwnd, int width, int height)
 		
 		graphicsInstance = graphicsEngine->CreateInstance(dim, renderPass, framebuffer, commandBuffer);
 
+		// gPass Initialization
+		mGBuffer.gRenderPass = graphicsInstance->CreateRenderPass();
+		mGBuffer.positionsAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
+		mGBuffer.albedoAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
+		mGBuffer.normalAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
+		mGBuffer.depthAttachment = graphicsInstance->CreateDepthAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE);
+
+		// gPass Sampler Settings
+		mGBuffer.positionsAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
+		mGBuffer.albedoAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
+		mGBuffer.normalAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
+		mGBuffer.depthAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
+
+		// gPass to RenderPass
+		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_COLOR, mGBuffer.positionsAttachment); // world Space Positions
+		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_COLOR, mGBuffer.normalAttachment); // Normals
+		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_COLOR, mGBuffer.albedoAttachment); // Albedo
+		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_DEPTH, mGBuffer.depthAttachment); // Depth
+		mGBuffer.gRenderPass->CreateRenderPass();
+
+		mGBuffer.gFramebuffer = graphicsInstance->CreateFramebuffer(mGBuffer.gRenderPass, FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE);
+		mGBuffer.gCommandbuffer = graphicsInstance->CreateCommandBuffer(mGBuffer.gFramebuffer);
+
+		std::shared_ptr<Invision::IVertexBindingDescription> bindingDescr = graphicsInstance->CreateVertexBindingDescription();
+		bindingDescr->CreateVertexBinding(0, sizeof(Vertex), Invision::VERTEX_INPUT_RATE_VERTEX)
+			->CreateAttribute(0, Invision::FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position))
+			.CreateAttribute(1, Invision::FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color))
+			.CreateAttribute(2, Invision::FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal));
+
+		// Deferred Shadow Shading
+		mSBuffer.sUniformBuffer = graphicsInstance->CreateUniformBuffer();
+		mSBuffer.sUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
+			.CreateUniformBuffer();
+
+		//mSBuffer.sDepthAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
+		mSBuffer.sDepthAttachment = graphicsInstance->CreateDepthAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, true);
+
+		mSBuffer.sDepthAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
+		mSBuffer.sRenderPass = graphicsInstance->CreateDepthOnlyRenderPass(mSBuffer.sDepthAttachment);
+
+		mSBuffer.sRenderPass->CreateRenderPass();
+		mSBuffer.sFramebuffer = graphicsInstance->CreateFramebuffer(mSBuffer.sRenderPass, FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE);
+		mSBuffer.sCommandbuffer = graphicsInstance->CreateCommandBuffer(mSBuffer.sFramebuffer);
+		mSBuffer.sPipeline = graphicsInstance->CreatePipeline();
+		mSBuffer.sPipeline->AddUniformBuffer(mSBuffer.sUniformBuffer);
+		auto vertShaderCode2 = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/shadow.vert.spv"));
+		mSBuffer.sPipeline->AddShader(vertShaderCode2, Invision::SHADER_STAGE_VERTEX_BIT);
+		mSBuffer.sPipeline->AddVertexDescription(bindingDescr);
+		mSBuffer.sPipeline->CreatePipeline(mSBuffer.sRenderPass);
+
+		// Deferred Shading Initialization
+		pipeline = graphicsInstance->CreatePipeline(&Invision::PipelineProperties(Invision::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, Invision::POLYGON_MODE_FILL, Invision::CULL_MODE_FRONT_BIT, Invision::FRONT_FACE_COUNTER_CLOCKWISE, 1.0f));
+
+		DeferredUniformBuffer = graphicsInstance->CreateUniformBuffer();
+		DeferredUniformBuffer->CreateImageBinding(0, 0, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mGBuffer.albedoAttachment)
+			.CreateImageBinding(0, 1, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mGBuffer.normalAttachment)
+			.CreateImageBinding(0, 2, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mGBuffer.positionsAttachment)
+			.CreateImageBinding(0, 3, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mSBuffer.sDepthAttachment)
+			.CreateUniformBinding(0, 4, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(UniformOptionsBuffer))
+			.CreateUniformBinding(0, 5, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(SLight))
+			.CreateUniformBinding(0, 6, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
+
+		auto deferredVertShaderCode = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/deferred.vert.spv"));
+		auto deferredFragShaderCode = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/deferred.frag.spv"));
+		pipeline->AddShader(deferredVertShaderCode, Invision::SHADER_STAGE_VERTEX_BIT);
+		pipeline->AddShader(deferredFragShaderCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
+		pipeline->AddUniformBuffer(DeferredUniformBuffer);
+		pipeline->CreatePipeline(renderPass);
+
 		renderer = graphicsInstance->CreateRenderer();
 
 	}
@@ -63,6 +132,14 @@ void GraphicsInstance::RecreateSwapchain(const int width, const int height)
 {
 	// setup swapchain
 	graphicsInstance->ResetPresentation({ mHwnd, width, height }, renderPass, framebuffer, commandBuffer);
+
+	// Reset GBuffer (Framebuffer and Commandbuffer)
+	mGBuffer.gCommandbuffer.reset();
+	mGBuffer.gCommandbuffer = graphicsInstance->CreateCommandBuffer(mGBuffer.gFramebuffer);
+
+	// Reset SBuffer (Shadowbuffer)
+	mSBuffer.sCommandbuffer.reset();
+	mSBuffer.sCommandbuffer = graphicsInstance->CreateCommandBuffer(mSBuffer.sFramebuffer);
 }
 
 bool GraphicsInstance::PrepareFrame(const int width, const int height)
@@ -78,7 +155,15 @@ void GraphicsInstance::Render()
 	//mGenUniformBuffer->UpdateUniform(&mLightUbo, sizeof(mLightUbo), 0, 2);
 
 	//mGeometryUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
+	UniformOptionsBuffer optionsBuffer;
+	optionsBuffer.option = 4;
 
+	DeferredUniformBuffer->UpdateUniform(&optionsBuffer, sizeof(UniformOptionsBuffer), 0, 4);
+	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo), 0, 5);
+
+
+	renderer->Draw(mGBuffer.gCommandbuffer);
+	renderer->Draw(mSBuffer.sCommandbuffer);
 	renderer->Draw(commandBuffer);
 }
 
@@ -123,17 +208,44 @@ void GraphicsInstance::UpdateLight(Light& light, LightIndex lightIndex)
 
 void GraphicsInstance::BeginCommandBuffer(const int width, const int height)
 {
+	// main command Buffer
 	commandBuffer->BeginCommandBuffer().
+
 		SetViewport({ 0, 0, (float)width, (float)height, 0.0, 1.0 }).
 		SetScissor({ 0, 0, (uint32_t)width, (uint32_t)height }).
-		BeginRenderPass(renderPass, framebuffer, 0, 0, width, height);
+		BeginRenderPass(renderPass, framebuffer, 0, 0, (uint32_t)width, (uint32_t)height).
+		BindDescriptorSets(DeferredUniformBuffer, pipeline).
+		BindPipeline(pipeline).
+		Draw(3, 1, 0, 0).
+		EndRenderPass().
+		EndCommandBuffer();
+
+	mSBuffer.sCommandbuffer->BeginCommandBuffer().
+		BeginRenderPass(mSBuffer.sRenderPass, mSBuffer.sFramebuffer, 0, 0, FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE).
+		SetViewport({ 0, 0, (float)FRAMEBUFFER_SIZE, (float)FRAMEBUFFER_SIZE, 0.0, 1.0 }).
+		SetScissor({ 0, 0, (uint32_t)FRAMEBUFFER_SIZE, (uint32_t)FRAMEBUFFER_SIZE }).
+		BindPipeline(mSBuffer.sPipeline);
+
+	mGBuffer.gCommandbuffer->BeginCommandBuffer().
+		BeginRenderPass(mGBuffer.gRenderPass, mGBuffer.gFramebuffer, 0, 0, FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE).
+		SetViewport({ 0, 0, (float)FRAMEBUFFER_SIZE, (float)FRAMEBUFFER_SIZE, 0.0, 1.0 }).
+		SetScissor({ 0, 0, (uint32_t)FRAMEBUFFER_SIZE, (uint32_t)FRAMEBUFFER_SIZE });
+
+
+	//ommandBuffer->BeginCommandBuffer().
+	//	SetViewport({ 0, 0, (float)width, (float)height, 0.0, 1.0 }).
+	//	SetScissor({ 0, 0, (uint32_t)width, (uint32_t)height }).
+	//	BeginRenderPass(renderPass, framebuffer, 0, 0, width, height);
 	
 }
 
 void GraphicsInstance::EndCommandBuffer()
 {
-	commandBuffer->EndRenderPass();
-	commandBuffer->EndCommandBuffer();
+	mSBuffer.sCommandbuffer->EndRenderPass();
+	mSBuffer.sCommandbuffer->EndCommandBuffer();
+
+	mGBuffer.gCommandbuffer->EndRenderPass();
+	mGBuffer.gCommandbuffer->EndCommandBuffer();
 }
 
 void GraphicsInstance::Destroy()
@@ -150,11 +262,24 @@ GraphicsInstance::~GraphicsInstance()
 // child class
 void DrawingInstance::BindMesh(Mesh &mesh)
 {
-	std::shared_ptr <Invision::ICommandBuffer> commandBuffer = mParentAddr->GetCommandBuffer();
+	std::shared_ptr <Invision::ICommandBuffer> gBuffer = mParentAddr->GetGeometryCommandBuffer();
+	std::shared_ptr <Invision::ICommandBuffer> shadowBuffer = mParentAddr->GetShadowCommandBuffer();
+	std::shared_ptr <Invision::IUniformBuffer> shadowUniform = mParentAddr->GetShadowUniformBuffer();
+	std::shared_ptr <Invision::IPipeline> shadowPipeline = mParentAddr->GetShadowPipeline();
 
+	// ShadowBuffer
+	// Draw Mesh
+	shadowBuffer->BindPipeline(shadowPipeline).
+		BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
+		BindDescriptorSets(shadowUniform, shadowPipeline).
+		BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32).
+		DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
+
+
+	// GBuffer
 	if (mesh.IsIndexed())
 	{
-		commandBuffer->BindPipeline(mesh.GetPipeline()).
+		gBuffer->BindPipeline(mesh.GetPipeline()).
 			BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
 			BindDescriptorSets(mesh.GetGeneralUniformBufferObject(), mesh.GetPipeline()).
 			BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32).
@@ -163,15 +288,15 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 
 #ifdef INVISION_HL_DRAW_NORMALS
 
-		commandBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
-		commandBuffer->BindPipeline(mesh.GetGeomPipeline());
-		commandBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
-		commandBuffer->DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
+		gBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
+		gBuffer->BindPipeline(mesh.GetGeomPipeline());
+		gBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
+		gBuffer->DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
 #endif
 	}
 	else
 	{
-		commandBuffer->BindPipeline(mesh.GetPipeline()).
+		gBuffer->BindPipeline(mesh.GetPipeline()).
 			BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
 			BindDescriptorSets(mesh.GetGeneralUniformBufferObject(), mesh.GetPipeline()).
 			//Draw(static_cast<uint32_t>(vertices.size()), 1, 0, 0).
@@ -179,10 +304,10 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 
 #ifdef INVISION_HL_DRAW_NORMALS
 
-		commandBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
-		commandBuffer->BindPipeline(mesh.GetGeomPipeline());
-		commandBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
-		commandBuffer->Draw(static_cast<uint32_t>(mesh.GetVertizes().size()), 1, 0);
+		gBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
+		gBuffer->BindPipeline(mesh.GetGeomPipeline());
+		gBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
+		gBuffer->Draw(static_cast<uint32_t>(mesh.GetVertizes().size()), 1, 0);
 #endif
 	}
 

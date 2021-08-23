@@ -16,6 +16,30 @@ class Light;
 
 struct SLight;
 
+struct GBuffer
+{
+	//std::shared_ptr <Invision::IPipeline> gPipeline;
+	std::shared_ptr <Invision::IRenderPass> gRenderPass;
+	std::shared_ptr <Invision::IFramebuffer> gFramebuffer;
+	std::shared_ptr <Invision::ICommandBuffer> gCommandbuffer;
+	std::shared_ptr <Invision::ITexture> positionsAttachment;
+	std::shared_ptr <Invision::ITexture> albedoAttachment;
+	std::shared_ptr <Invision::ITexture> normalAttachment;
+	std::shared_ptr <Invision::ITexture> depthAttachment;
+};
+
+struct ShadowBuffer
+{
+	std::shared_ptr <Invision::IPipeline> sPipeline;
+	std::shared_ptr <Invision::IRenderPass> sRenderPass;
+	std::shared_ptr <Invision::IFramebuffer> sFramebuffer;
+	std::shared_ptr <Invision::ICommandBuffer> sCommandbuffer;
+	std::shared_ptr <Invision::ITexture> sDepthAttachment;
+	std::shared_ptr <Invision::IUniformBuffer> sUniformBuffer;
+};
+
+#define FRAMEBUFFER_SIZE 2048
+
 /*struct SLight
 {
 	__declspec(align(16)) glm::vec4 position;
@@ -69,12 +93,27 @@ class GraphicsInstance
 
 		std::shared_ptr <Invision::IRenderPass> GetRenderPass()
 		{
-			return renderPass;
+			return mGBuffer.gRenderPass;
 		}
 
-		std::shared_ptr <Invision::ICommandBuffer> GetCommandBuffer()
+		std::shared_ptr <Invision::ICommandBuffer> GetGeometryCommandBuffer()
 		{
-			return commandBuffer;
+			return mGBuffer.gCommandbuffer;
+		}
+
+		std::shared_ptr <Invision::ICommandBuffer> GetShadowCommandBuffer()
+		{
+			return mSBuffer.sCommandbuffer;
+		}
+
+		std::shared_ptr <Invision::IUniformBuffer> GetShadowUniformBuffer()
+		{
+			return mSBuffer.sUniformBuffer;
+		}
+
+		std::shared_ptr <Invision::IPipeline> GetShadowPipeline()
+		{
+			return mSBuffer.sPipeline;
 		}
 
 		GeneralUbo GetGeneralUbo()
@@ -98,6 +137,17 @@ class GraphicsInstance
 		std::shared_ptr <Invision::IRenderPass> renderPass;
 		std::shared_ptr <Invision::IFramebuffer> framebuffer;
 		std::shared_ptr <Invision::ICommandBuffer> commandBuffer;
+
+		std::shared_ptr <Invision::IPipeline> pipeline;
+		std::shared_ptr <Invision::IUniformBuffer> DeferredUniformBuffer;
+
+		struct UniformOptionsBuffer {
+			int option;
+		};
+
+
+		GBuffer mGBuffer;
+		ShadowBuffer mSBuffer;
 
 		GeneralUbo mGUbo;
 		LightUbo mLightUbo;
