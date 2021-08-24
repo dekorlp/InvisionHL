@@ -30,12 +30,11 @@ struct GBuffer
 
 struct ShadowBuffer
 {
-	std::shared_ptr <Invision::IPipeline> sPipeline;
+	//std::shared_ptr <Invision::IPipeline> sPipeline;
 	std::shared_ptr <Invision::IRenderPass> sRenderPass;
 	std::shared_ptr <Invision::IFramebuffer> sFramebuffer;
 	std::shared_ptr <Invision::ICommandBuffer> sCommandbuffer;
 	std::shared_ptr <Invision::ITexture> sDepthAttachment;
-	std::shared_ptr <Invision::IUniformBuffer> sUniformBuffer;
 };
 
 #define FRAMEBUFFER_SIZE 2048
@@ -54,6 +53,7 @@ struct ShadowBuffer
 struct LightUbo {
 	__declspec(align(16)) SLight light[8];
 	__declspec(align(16)) int countLights;
+	__declspec(align(16)) glm::mat4 lightSpaceMatrix;
 };
 
 struct GeneralUbo {
@@ -96,6 +96,11 @@ class GraphicsInstance
 			return mGBuffer.gRenderPass;
 		}
 
+		std::shared_ptr <Invision::IRenderPass> GetShadowRenderPass()
+		{
+			return mSBuffer.sRenderPass;
+		}
+
 		std::shared_ptr <Invision::ICommandBuffer> GetGeometryCommandBuffer()
 		{
 			return mGBuffer.gCommandbuffer;
@@ -106,15 +111,7 @@ class GraphicsInstance
 			return mSBuffer.sCommandbuffer;
 		}
 
-		std::shared_ptr <Invision::IUniformBuffer> GetShadowUniformBuffer()
-		{
-			return mSBuffer.sUniformBuffer;
-		}
 
-		std::shared_ptr <Invision::IPipeline> GetShadowPipeline()
-		{
-			return mSBuffer.sPipeline;
-		}
 
 		GeneralUbo GetGeneralUbo()
 		{
@@ -192,6 +189,11 @@ public:
 	std::shared_ptr <Invision::IRenderPass> GetRenderPass()
 	{
 		return mParentAddr->GetRenderPass();
+	}
+
+	std::shared_ptr <Invision::IRenderPass> GetShadowRenderPass()
+	{
+		return mParentAddr->GetShadowRenderPass();
 	}
 
 	void SetParentAddr(GraphicsInstance& parentAddr)

@@ -17,7 +17,6 @@ struct SLight
 	__declspec(align(16)) glm::vec4 position;
 	__declspec(align(16)) glm::vec4 color;
 	__declspec(align(16)) float strength;
-	__declspec(align(16)) glm::mat4 lightSpaceMatrix;
 	//__declspec(align(16)) float direction;
 	//__declspec(align(16)) float falloffStart;
 	//__declspec(align(16)) float falloffEnd;
@@ -33,6 +32,7 @@ public:
 	void SetPosition(glm::vec3 &position);
 	void SetColor(glm::vec3 &color);
 	glm::vec3& GetColor();
+	glm::vec3& GetPosition();
 	SLight GetLightInformations();
 	void SetLightInformations(SLight& light);
 private:

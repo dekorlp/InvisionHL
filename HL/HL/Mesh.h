@@ -48,6 +48,7 @@ public:
 	std::shared_ptr <Invision::IVertexBuffer> GetVertexBuffer();
 	std::shared_ptr<Invision::IIndexBuffer> GetIndexBuffer();
 	std::shared_ptr<Invision::IPipeline> GetPipeline();
+	std::shared_ptr<Invision::IPipeline> GetShadowPipeline();
 	std::shared_ptr<Invision::IPipeline> GetGeomPipeline();
 	bool IsIndexed();
 
@@ -79,6 +80,11 @@ public:
 		return mGeometryUniformBuffer;
 	}
 
+	std::shared_ptr <Invision::IUniformBuffer> GetShadowUniformBufferObject()
+	{
+		return mShadowUniformBuffer;
+	}
+
 	void SetParent(Mesh& mesh)
 	{
 		this->parent = &mesh;
@@ -97,11 +103,12 @@ private:
 
 	std::shared_ptr <Invision::IUniformBuffer> mGenUniformBuffer;
 	std::shared_ptr <Invision::IUniformBuffer> mGeometryUniformBuffer;
+	std::shared_ptr <Invision::IUniformBuffer> mShadowUniformBuffer;
 
-	// becomes user 
 	std::shared_ptr <Invision::IVertexBuffer> vertexBuffer;
 	std::shared_ptr <Invision::IIndexBuffer> indexBuffer;
 	std::shared_ptr <Invision::IPipeline> pipeline;
+	std::shared_ptr <Invision::IPipeline> mShadowPipeline;
 
 	std::shared_ptr <Invision::IPipeline> geomPipeline;
 

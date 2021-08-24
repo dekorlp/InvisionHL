@@ -51,6 +51,17 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	pipeline->CreatePipeline(instance.GetRenderPass());
 	isIndexed = true;
 
+	// Deferred Shadow Shading
+	mShadowUniformBuffer = graphicsInstance->CreateUniformBuffer();
+	mShadowUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
+		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(LightUbo) * 16)
+		.CreateUniformBuffer();
+	mShadowPipeline = graphicsInstance->CreatePipeline();
+	mShadowPipeline->AddUniformBuffer(mShadowUniformBuffer);
+	auto vertShaderCode2 = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/shadow.vert.spv"));
+	mShadowPipeline->AddShader(vertShaderCode2, Invision::SHADER_STAGE_VERTEX_BIT);
+	mShadowPipeline->AddVertexDescription(verBindingDescr);
+	mShadowPipeline->CreatePipeline(instance.GetShadowRenderPass());
 
 	/*// Create geometry Shader Pipeline
 	auto vertShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.vert.spv");
@@ -91,10 +102,13 @@ void Mesh::UpdateUniform(DrawingInstance& instance, glm::mat4 modelMatrix)
 	}
 	
 	
-	
+	// Shadow Uniform Buffer
+	mShadowUniformBuffer->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
+	mShadowUniformBuffer->UpdateUniform(&instance.GetLightUbo(), sizeof(instance.GetLightUbo()) * 16, 0, 1);
 
 	mGenUniformBuffer->UpdateUniform(&instance.GetGeneralUbo(), sizeof(instance.GetGeneralUbo()), 0, 1);
 	//mGenUniformBuffer->UpdateUniform(&instance.GetLightUbo(), sizeof(instance.GetLightUbo()), 0, 2);
+	
 	mGeometryUniformBuffer->UpdateUniform(&instance.GetGeneralUbo(), sizeof(instance.GetGeneralUbo()), 0, 1);
 	mGenUniformBuffer->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
 	mGeometryUniformBuffer->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
@@ -769,6 +783,12 @@ std::shared_ptr<Invision::IPipeline> Mesh::GetPipeline()
 {
 	return pipeline;
 }
+
+std::shared_ptr<Invision::IPipeline> Mesh::GetShadowPipeline()
+{
+	return mShadowPipeline;
+}
+
 
 std::shared_ptr<Invision::IPipeline> Mesh::GetGeomPipeline()
 {

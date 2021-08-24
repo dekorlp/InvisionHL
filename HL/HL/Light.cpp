@@ -33,6 +33,11 @@ glm::vec3& Light::GetColor()
 	return glm::vec3(mLight.color.x, mLight.color.y, mLight.color.z);
 }
 
+glm::vec3& Light::GetPosition()
+{
+	return glm::vec3(mLight.position.x, mLight.position.y, mLight.position.z);
+}
+
 SLight Light::GetLightInformations()
 {
 	return mLight;

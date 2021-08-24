@@ -19,7 +19,7 @@ struct Light
 	vec4 position;
 	vec4 color;
 	float strength;
-	mat4 lightSpaceMatrix;
+	
 	//float direction;
 	//float falloffstart;
 	//float falloffEnd;
@@ -29,6 +29,7 @@ struct Light
 layout(set = 0, binding = 5) uniform LightUbo {
 	Light lights[8];
 	int countLights;
+	mat4 lightSpaceMatrix;
 } lUbo;
 
 layout(set = 0, binding = 6) uniform GeneralUniformBufferObject {
@@ -160,9 +161,10 @@ void main() {
 			vec3 specular = specularStrength * spec * lUbo.lights[0].color.xyz;  
 	
 			// calculate light and shadow
-			float shadow = ShadowCalculation(lUbo.lights[0].lightSpaceMatrix * vec4(FragPos, 1.0), FragPos, normal);
-			vec3 lightning = (ambient + (1.0 - 0.99 * shadow) + (diffuse + specular)) * color; 
+			float shadow = ShadowCalculation( lUbo.lightSpaceMatrix  * vec4(FragPos, 1.0), FragPos, normal);
+			vec3 lightning = (ambient + (1.0 - 0.99 * shadow) * (diffuse + specular)) * color; 
 	
+			//outColor = vec4((ambient + diffuse + specular)  * color, 1.0);
 			outColor = vec4(lightning, 1.0);
 		
 			break;

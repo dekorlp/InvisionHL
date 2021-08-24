@@ -58,10 +58,7 @@ void GraphicsInstance::Init(HWND hwnd, int width, int height)
 			.CreateAttribute(1, Invision::FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color))
 			.CreateAttribute(2, Invision::FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal));
 
-		// Deferred Shadow Shading
-		mSBuffer.sUniformBuffer = graphicsInstance->CreateUniformBuffer();
-		mSBuffer.sUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
-			.CreateUniformBuffer();
+		
 
 		//mSBuffer.sDepthAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
 		mSBuffer.sDepthAttachment = graphicsInstance->CreateDepthAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, true);
@@ -72,12 +69,7 @@ void GraphicsInstance::Init(HWND hwnd, int width, int height)
 		mSBuffer.sRenderPass->CreateRenderPass();
 		mSBuffer.sFramebuffer = graphicsInstance->CreateFramebuffer(mSBuffer.sRenderPass, FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE);
 		mSBuffer.sCommandbuffer = graphicsInstance->CreateCommandBuffer(mSBuffer.sFramebuffer);
-		mSBuffer.sPipeline = graphicsInstance->CreatePipeline();
-		mSBuffer.sPipeline->AddUniformBuffer(mSBuffer.sUniformBuffer);
-		auto vertShaderCode2 = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/shadow.vert.spv"));
-		mSBuffer.sPipeline->AddShader(vertShaderCode2, Invision::SHADER_STAGE_VERTEX_BIT);
-		mSBuffer.sPipeline->AddVertexDescription(bindingDescr);
-		mSBuffer.sPipeline->CreatePipeline(mSBuffer.sRenderPass);
+		
 
 		// Deferred Shading Initialization
 		pipeline = graphicsInstance->CreatePipeline(&Invision::PipelineProperties(Invision::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, Invision::POLYGON_MODE_FILL, Invision::CULL_MODE_FRONT_BIT, Invision::FRONT_FACE_COUNTER_CLOCKWISE, 1.0f));
@@ -88,7 +80,7 @@ void GraphicsInstance::Init(HWND hwnd, int width, int height)
 			.CreateImageBinding(0, 2, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mGBuffer.positionsAttachment)
 			.CreateImageBinding(0, 3, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mSBuffer.sDepthAttachment)
 			.CreateUniformBinding(0, 4, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(UniformOptionsBuffer))
-			.CreateUniformBinding(0, 5, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(SLight))
+			.CreateUniformBinding(0, 5, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(SLight) * 16)
 			.CreateUniformBinding(0, 6, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
 
 		auto deferredVertShaderCode = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/deferred.vert.spv"));
@@ -156,10 +148,10 @@ void GraphicsInstance::Render()
 
 	//mGeometryUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
 	UniformOptionsBuffer optionsBuffer;
-	optionsBuffer.option = 4;
+	optionsBuffer.option = 5;
 
 	DeferredUniformBuffer->UpdateUniform(&optionsBuffer, sizeof(UniformOptionsBuffer), 0, 4);
-	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo), 0, 5);
+	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo) * 16, 0, 5);
 
 
 	renderer->Draw(mGBuffer.gCommandbuffer);
@@ -198,12 +190,33 @@ LightIndex GraphicsInstance::AddLight(Light& light)
 
 	mLightUbo.light[mLightUbo.countLights - 1] = (light.GetLightInformations());
 
+	// Light Transformation Matrix Generation
+	float near_plane = 1.0f, far_plane = 7.5f;
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+	lightProjection[1][1] *= -1;
+	glm::mat4 lightView = glm::lookAt(glm::vec3(light.GetPosition()),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	mLightUbo.lightSpaceMatrix = lightProjection * lightView;
+
+
 	return (LightIndex)(mLightUbo.countLights - 1);
 }
 
 void GraphicsInstance::UpdateLight(Light& light, LightIndex lightIndex)
 {
 	mLightUbo.light[lightIndex] = light.GetLightInformations();
+
+	// Light Transformation Matrix Generation
+	float near_plane = 1.0f, far_plane = 7.5f;
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+	lightProjection[1][1] *= -1;
+	glm::mat4 lightView = glm::lookAt(glm::vec3(light.GetPosition()),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	mLightUbo.lightSpaceMatrix = lightProjection * lightView;
 }
 
 void GraphicsInstance::BeginCommandBuffer(const int width, const int height)
@@ -223,8 +236,7 @@ void GraphicsInstance::BeginCommandBuffer(const int width, const int height)
 	mSBuffer.sCommandbuffer->BeginCommandBuffer().
 		BeginRenderPass(mSBuffer.sRenderPass, mSBuffer.sFramebuffer, 0, 0, FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE).
 		SetViewport({ 0, 0, (float)FRAMEBUFFER_SIZE, (float)FRAMEBUFFER_SIZE, 0.0, 1.0 }).
-		SetScissor({ 0, 0, (uint32_t)FRAMEBUFFER_SIZE, (uint32_t)FRAMEBUFFER_SIZE }).
-		BindPipeline(mSBuffer.sPipeline);
+		SetScissor({ 0, 0, (uint32_t)FRAMEBUFFER_SIZE, (uint32_t)FRAMEBUFFER_SIZE });
 
 	mGBuffer.gCommandbuffer->BeginCommandBuffer().
 		BeginRenderPass(mGBuffer.gRenderPass, mGBuffer.gFramebuffer, 0, 0, FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE).
@@ -264,14 +276,13 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 {
 	std::shared_ptr <Invision::ICommandBuffer> gBuffer = mParentAddr->GetGeometryCommandBuffer();
 	std::shared_ptr <Invision::ICommandBuffer> shadowBuffer = mParentAddr->GetShadowCommandBuffer();
-	std::shared_ptr <Invision::IUniformBuffer> shadowUniform = mParentAddr->GetShadowUniformBuffer();
-	std::shared_ptr <Invision::IPipeline> shadowPipeline = mParentAddr->GetShadowPipeline();
 
 	// ShadowBuffer
 	// Draw Mesh
-	shadowBuffer->BindPipeline(shadowPipeline).
+	shadowBuffer->BindPipeline(mesh.GetShadowPipeline()).
 		BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
-		BindDescriptorSets(shadowUniform, shadowPipeline).
+		BindDescriptorSets(mesh.GetShadowUniformBufferObject(), mesh.GetShadowPipeline()).
+		BindPipeline(mesh.GetShadowPipeline()).
 		BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32).
 		DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
 
