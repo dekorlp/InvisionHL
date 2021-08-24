@@ -164,7 +164,7 @@ class App : public InvisionHL
 
 		//quad.AddChildMesh(quad2);
 
-		plane = Mesh::CreatePlane(instance, 20.0f, 20.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+		plane = Mesh::CreatePlane(instance, 200.0f, 200.0f, glm::vec3(1.0f, 1.0f, 0.0f));
 		leftFeet = Mesh::CreatePyramid(instance, 1.0, 0.5, 4.0, glm::vec3(1.0f, 0.0f, 0.0f));
 		rightFeet = Mesh::CreatePyramid(instance, 1.0, 0.5, 4.0, glm::vec3(1.0f, 0.0f, 0.0f));
 		bottomCylinder = Mesh::CreateCylinder(instance, 1.5, 2.0, 1.0, 100, 100, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -227,10 +227,10 @@ class App : public InvisionHL
 
 		// objects
 
-		plane.SetModelMatrix(glm::mat4(1.0f));
+		plane.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
 		plane.UpdateUniform(instance, plane.GetModelMatrix());
 
-		leftFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f)));
+		leftFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
 		leftFeet.UpdateUniform(instance, leftFeet.GetModelMatrix());
 
 		rightFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)));

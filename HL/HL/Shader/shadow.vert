@@ -43,5 +43,5 @@ out gl_PerVertex
 
 
 void main() {
-	gl_Position =  lUbo.lightSpaceMatrix * ubo.model * vec4(inPosition, 1.0);
+	gl_Position =  lUbo.lightSpaceMatrix  * vec4(inPosition, 1.0);
 }
