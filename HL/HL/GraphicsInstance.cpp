@@ -80,7 +80,7 @@ void GraphicsInstance::Init(HWND hwnd, int width, int height)
 			.CreateImageBinding(0, 2, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mGBuffer.positionsAttachment)
 			.CreateImageBinding(0, 3, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mSBuffer.sDepthAttachment)
 			.CreateUniformBinding(0, 4, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(UniformOptionsBuffer))
-			.CreateUniformBinding(0, 5, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(SLight) * 16)
+			.CreateUniformBinding(0, 5, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(LightUbo) +(sizeof(SLight) *8))
 			.CreateUniformBinding(0, 6, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
 
 		auto deferredVertShaderCode = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/deferred.vert.spv"));
@@ -148,10 +148,10 @@ void GraphicsInstance::Render()
 
 	//mGeometryUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
 	UniformOptionsBuffer optionsBuffer;
-	optionsBuffer.option = 1;
+	optionsBuffer.option = 5;
 
 	DeferredUniformBuffer->UpdateUniform(&optionsBuffer, sizeof(UniformOptionsBuffer), 0, 4);
-	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo) * 16, 0, 5);
+	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo) + (sizeof(SLight) * 8), 0, 5);
 
 
 	renderer->Draw(mGBuffer.gCommandbuffer);

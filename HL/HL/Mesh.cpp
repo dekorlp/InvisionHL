@@ -54,7 +54,7 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	// Deferred Shadow Shading
 	mShadowUniformBuffer = graphicsInstance->CreateUniformBuffer();
 	mShadowUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
-		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(LightUbo) * 16)
+		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(LightUbo) + (sizeof(SLight) * 8))
 		.CreateUniformBuffer();
 	mShadowPipeline = graphicsInstance->CreatePipeline();
 	mShadowPipeline->AddUniformBuffer(mShadowUniformBuffer);
@@ -104,7 +104,7 @@ void Mesh::UpdateUniform(DrawingInstance& instance, glm::mat4 modelMatrix)
 	
 	// Shadow Uniform Buffer
 	mShadowUniformBuffer->UpdateUniform(&ubo, sizeof(ubo), 0, 0);
-	mShadowUniformBuffer->UpdateUniform(&instance.GetLightUbo(), sizeof(instance.GetLightUbo()) * 16, 0, 1);
+	mShadowUniformBuffer->UpdateUniform(&instance.GetLightUbo(), sizeof(instance.GetLightUbo()) + (sizeof(SLight) * 8), 0, 1);
 
 	mGenUniformBuffer->UpdateUniform(&instance.GetGeneralUbo(), sizeof(instance.GetGeneralUbo()), 0, 1);
 	//mGenUniformBuffer->UpdateUniform(&instance.GetLightUbo(), sizeof(instance.GetLightUbo()), 0, 2);
