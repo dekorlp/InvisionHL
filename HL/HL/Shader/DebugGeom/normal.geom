@@ -6,12 +6,9 @@ layout (line_strip, max_vertices = 6) out;
 
 struct Material
 {
-	float diffuse;
-	float specular;
+	float specularStrength;
 	float shininess;
-	float shininess1;
 };
-
 
 layout(binding = 0) uniform UniformBufferObject {
 	Material material;

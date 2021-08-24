@@ -63,7 +63,7 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	mShadowPipeline->AddVertexDescription(verBindingDescr);
 	mShadowPipeline->CreatePipeline(instance.GetShadowRenderPass());
 
-	/*// Create geometry Shader Pipeline
+	// Create geometry Shader Pipeline
 	auto vertShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.vert.spv");
 	auto geomShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.geom.spv");
 	auto fragShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.frag.spv");
@@ -73,7 +73,7 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	geomPipeline->AddShader(geomShaderNormalCode, Invision::SHADER_STAGE_GEOMETRY_BIT);
 	geomPipeline->AddShader(fragShaderNormalCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
 	geomPipeline->AddVertexDescription(verBindingDescr);
-	geomPipeline->CreatePipeline(instance.GetRenderPass());*/
+	geomPipeline->CreatePipeline(instance.GetRenderPass());
 
 
 	

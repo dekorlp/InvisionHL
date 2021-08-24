@@ -148,7 +148,7 @@ void GraphicsInstance::Render()
 
 	//mGeometryUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
 	UniformOptionsBuffer optionsBuffer;
-	optionsBuffer.option = 5;
+	optionsBuffer.option = 1;
 
 	DeferredUniformBuffer->UpdateUniform(&optionsBuffer, sizeof(UniformOptionsBuffer), 0, 4);
 	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo) * 16, 0, 5);
@@ -300,6 +300,7 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 #ifdef INVISION_HL_DRAW_NORMALS
 
 		gBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
+		gBuffer->BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32);
 		gBuffer->BindPipeline(mesh.GetGeomPipeline());
 		gBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
 		gBuffer->DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);

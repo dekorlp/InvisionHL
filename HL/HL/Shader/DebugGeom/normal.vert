@@ -3,10 +3,8 @@
 
 struct Material
 {
-	float diffuse;
-	float specular;
+	float specularStrength;
 	float shininess;
-	float shininess1;
 };
 
 
