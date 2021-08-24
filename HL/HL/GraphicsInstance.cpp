@@ -279,17 +279,18 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 
 	// ShadowBuffer
 	// Draw Mesh
-	shadowBuffer->BindPipeline(mesh.GetShadowPipeline()).
-		BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
-		BindDescriptorSets(mesh.GetShadowUniformBufferObject(), mesh.GetShadowPipeline()).
-		BindPipeline(mesh.GetShadowPipeline()).
-		BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32).
-		DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
 
-
-	// GBuffer
+	
 	if (mesh.IsIndexed())
 	{
+		// SBuffer
+		shadowBuffer->BindPipeline(mesh.GetShadowPipeline()).
+			BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
+			BindDescriptorSets(mesh.GetShadowUniformBufferObject(), mesh.GetShadowPipeline()).
+			BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32).
+			DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
+
+		// GBuffer
 		gBuffer->BindPipeline(mesh.GetPipeline()).
 			BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
 			BindDescriptorSets(mesh.GetGeneralUniformBufferObject(), mesh.GetPipeline()).
@@ -308,6 +309,11 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 	}
 	else
 	{
+		shadowBuffer->BindPipeline(mesh.GetShadowPipeline()).
+			BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
+			BindDescriptorSets(mesh.GetShadowUniformBufferObject(), mesh.GetShadowPipeline()).
+			Draw(static_cast<uint32_t>(mesh.GetVertizes().size()), 1, 0);
+
 		gBuffer->BindPipeline(mesh.GetPipeline()).
 			BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1).
 			BindDescriptorSets(mesh.GetGeneralUniformBufferObject(), mesh.GetPipeline()).
