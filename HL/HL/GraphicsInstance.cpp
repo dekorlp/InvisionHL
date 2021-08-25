@@ -191,14 +191,15 @@ LightIndex GraphicsInstance::AddLight(Light& light)
 	mLightUbo.light[mLightUbo.countLights - 1] = (light.GetLightInformations());
 
 	// Light Transformation Matrix Generation
-	float near_plane = 1.0f, far_plane = 7.5f;
-	glm::mat4 lightProjection = glm::perspective(glm::radians(45.0f), 1.0f, 1.0f, 96.0f);
+	float near_plane = 0.1f, far_plane = 100.0f;
+	//glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 	//lightProjection[1][1] *= -1;
+	glm::mat4 lightProjection = glm::perspective(glm::radians(45.0f), 1.0f, 1.0f, 96.0f);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.GetPosition()),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 
-	mLightUbo.lightSpaceMatrix = lightProjection * lightView * glm::mat4(1.0f);
+	mLightUbo.lightSpaceMatrix = lightProjection * lightView;
 
 
 	return (LightIndex)(mLightUbo.countLights - 1);
@@ -209,10 +210,10 @@ void GraphicsInstance::UpdateLight(Light& light, LightIndex lightIndex)
 	mLightUbo.light[lightIndex] = light.GetLightInformations();
 
 	// Light Transformation Matrix Generation
-	float near_plane = 1.0f, far_plane = 7.5f;
+	float near_plane = 0.1f, far_plane = 100.0f;
 	//glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-	glm::mat4 lightProjection = glm::perspective(glm::radians(45.0f), 1.0f, 1.0f, 96.0f);
 	//lightProjection[1][1] *= -1;
+	glm::mat4 lightProjection = glm::perspective(glm::radians(45.0f), 1.0f, 1.0f, 100.0f);
 	glm::mat4 lightView = glm::lookAt(glm::vec3(light.GetPosition()),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));

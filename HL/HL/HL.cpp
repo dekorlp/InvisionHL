@@ -190,7 +190,7 @@ class App : public InvisionHL
 		proj[1][1] *= -1;
 		SetProjectionViewMatrix(view, proj, glm::vec3(2.0f, 2.0f, 2.0f));
 
-		light = Light(glm::vec3(0.0f, 16.0f, 12.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		light = Light(glm::vec3(0.0f, 10.0f, 10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		LightIndex lgtIndex = instance.AddLight(light);
 		light.SetStrength(8);
 		instance.UpdateLight(light, lgtIndex);
@@ -230,7 +230,7 @@ class App : public InvisionHL
 		plane.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
 		plane.UpdateUniform(instance, plane.GetModelMatrix());
 
-		leftFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
+		leftFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.1f)));
 		leftFeet.UpdateUniform(instance, leftFeet.GetModelMatrix());
 
 		rightFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)));
