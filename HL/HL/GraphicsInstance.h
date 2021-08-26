@@ -6,6 +6,8 @@
 #include "Engine/input/WindowsKeyboard.h"
 
 #define GLM_FORCE_RADIANS
+#define GLM_FORECE_DEPTH_ZERO_TO_ONE
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
