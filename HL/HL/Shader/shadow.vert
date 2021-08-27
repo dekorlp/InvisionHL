@@ -9,7 +9,7 @@ struct Light
 	vec4 color;
 	float strength;
 	mat4 lightSpaceMatrix;
-	//float direction;
+	float direction;
 	//float falloffstart;
 	//float falloffEnd;
 	//float spotPower;

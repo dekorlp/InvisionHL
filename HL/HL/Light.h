@@ -20,7 +20,7 @@ struct SLight
 	__declspec(align(16)) glm::vec4 color;
 	__declspec(align(16)) float strength;
 	__declspec(align(16)) glm::mat4 lightSpaceMatrix;
-	//__declspec(align(16)) float direction;
+	__declspec(align(16)) float direction;
 	//__declspec(align(16)) float falloffStart;
 	//__declspec(align(16)) float falloffEnd;
 	//__declspec(align(16)) float spotPower;
