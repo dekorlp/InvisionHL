@@ -55,7 +55,6 @@ struct ShadowBuffer
 struct LightUbo {
 	__declspec(align(16)) SLight light[8];
 	__declspec(align(16)) int countLights;
-	__declspec(align(16)) glm::mat4 lightSpaceMatrix;
 };
 
 struct GeneralUbo {

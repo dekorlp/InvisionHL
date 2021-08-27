@@ -8,7 +8,7 @@ struct Light
 	vec4 position;
 	vec4 color;
 	float strength;
-	
+	mat4 lightSpaceMatrix;
 	//float direction;
 	//float falloffstart;
 	//float falloffEnd;
@@ -29,7 +29,6 @@ layout(set = 0, binding = 0) uniform UniformBufferObject {
 layout(set = 0, binding = 1) uniform LightUbo {
 	Light lights[8];
 	int countLights;
-	mat4 lightSpaceMatrix;
 } lUbo;
 
 layout(location = 0) in vec3 inPosition;
@@ -43,5 +42,5 @@ out gl_PerVertex
 
 
 void main() {
-	gl_Position =  lUbo.lightSpaceMatrix * ubo.model  * vec4(inPosition, 1.0);
+	gl_Position =  lUbo.lights[0].lightSpaceMatrix * ubo.model  * vec4(inPosition, 1.0);
 }

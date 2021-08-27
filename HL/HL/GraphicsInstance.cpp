@@ -199,7 +199,7 @@ LightIndex GraphicsInstance::AddLight(Light& light)
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 
-	mLightUbo.lightSpaceMatrix = lightProjection * lightView;
+	mLightUbo.light[mLightUbo.countLights - 1].lightSpaceMatrix = lightProjection * lightView;
 
 
 	return (LightIndex)(mLightUbo.countLights - 1);
@@ -218,7 +218,7 @@ void GraphicsInstance::UpdateLight(Light& light, LightIndex lightIndex)
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 
-	mLightUbo.lightSpaceMatrix = lightProjection * lightView;
+	mLightUbo.light[mLightUbo.countLights - 1].lightSpaceMatrix = lightProjection * lightView;
 }
 
 void GraphicsInstance::BeginCommandBuffer(const int width, const int height)
