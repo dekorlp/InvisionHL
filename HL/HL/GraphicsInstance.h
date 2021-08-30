@@ -65,7 +65,7 @@ struct GeneralUbo {
 	
 };
 
-//#define INVISION_HL_DRAW_NORMALS
+#define INVISION_HL_DRAW_NORMALS
 
 class GraphicsInstance
 {
@@ -92,7 +92,12 @@ class GraphicsInstance
 			return graphicsInstance;
 		}
 
-		std::shared_ptr <Invision::IRenderPass> GetRenderPass()
+		std::shared_ptr <Invision::IRenderPass> GetDeferredRenderPass()
+		{
+			return renderPass;
+		}
+
+		std::shared_ptr <Invision::IRenderPass> GetGeometryRenderPass()
 		{
 			return mGBuffer.gRenderPass;
 		}
@@ -100,6 +105,11 @@ class GraphicsInstance
 		std::shared_ptr <Invision::IRenderPass> GetShadowRenderPass()
 		{
 			return mSBuffer.sRenderPass;
+		}
+
+		std::shared_ptr <Invision::ICommandBuffer> GetDeferredCommandBuffer()
+		{
+			return commandBuffer;
 		}
 
 		std::shared_ptr <Invision::ICommandBuffer> GetGeometryCommandBuffer()
@@ -187,9 +197,14 @@ public:
 		return mParentAddr->GetGraphicsInstance();
 	}
 
-	std::shared_ptr <Invision::IRenderPass> GetRenderPass()
+	std::shared_ptr <Invision::IRenderPass> GetDeferredRenderPass()
 	{
-		return mParentAddr->GetRenderPass();
+		return mParentAddr->GetDeferredRenderPass();
+	}
+
+	std::shared_ptr <Invision::IRenderPass> GetGeometryRenderPass()
+	{
+		return mParentAddr->GetGeometryRenderPass();
 	}
 
 	std::shared_ptr <Invision::IRenderPass> GetShadowRenderPass()

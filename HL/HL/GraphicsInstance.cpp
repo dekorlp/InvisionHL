@@ -231,9 +231,8 @@ void GraphicsInstance::BeginCommandBuffer(const int width, const int height)
 		BeginRenderPass(renderPass, framebuffer, 0, 0, (uint32_t)width, (uint32_t)height).
 		BindDescriptorSets(DeferredUniformBuffer, pipeline).
 		BindPipeline(pipeline).
-		Draw(3, 1, 0, 0).
-		EndRenderPass().
-		EndCommandBuffer();
+		Draw(3, 1, 0, 0);
+		
 
 	mSBuffer.sCommandbuffer->BeginCommandBuffer().
 		BeginRenderPass(mSBuffer.sRenderPass, mSBuffer.sFramebuffer, 0, 0, FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE).
@@ -255,11 +254,16 @@ void GraphicsInstance::BeginCommandBuffer(const int width, const int height)
 
 void GraphicsInstance::EndCommandBuffer()
 {
+	commandBuffer->EndRenderPass();
+	commandBuffer->EndCommandBuffer();
+
 	mSBuffer.sCommandbuffer->EndRenderPass();
 	mSBuffer.sCommandbuffer->EndCommandBuffer();
 
 	mGBuffer.gCommandbuffer->EndRenderPass();
 	mGBuffer.gCommandbuffer->EndCommandBuffer();
+
+	
 }
 
 void GraphicsInstance::Destroy()
@@ -278,6 +282,7 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 {
 	std::shared_ptr <Invision::ICommandBuffer> gBuffer = mParentAddr->GetGeometryCommandBuffer();
 	std::shared_ptr <Invision::ICommandBuffer> shadowBuffer = mParentAddr->GetShadowCommandBuffer();
+	std::shared_ptr <Invision::ICommandBuffer> commandBuffer = mParentAddr->GetDeferredCommandBuffer();
 
 	// ShadowBuffer
 	// Draw Mesh
@@ -302,11 +307,11 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 
 #ifdef INVISION_HL_DRAW_NORMALS
 
-		gBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
-		gBuffer->BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32);
-		gBuffer->BindPipeline(mesh.GetGeomPipeline());
-		gBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
-		gBuffer->DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
+		commandBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
+		commandBuffer->BindIndexBuffer(mesh.GetIndexBuffer(), Invision::INDEX_TYPE_UINT32);
+		commandBuffer->BindPipeline(mesh.GetGeomPipeline());
+		commandBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
+		commandBuffer->DrawIndexed(static_cast<uint32_t>(mesh.GetIndizes().size()), 1, 0, 0, 0);
 #endif
 	}
 	else
@@ -324,10 +329,10 @@ void DrawingInstance::BindMesh(Mesh &mesh)
 
 #ifdef INVISION_HL_DRAW_NORMALS
 
-		gBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
-		gBuffer->BindPipeline(mesh.GetGeomPipeline());
-		gBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
-		gBuffer->Draw(static_cast<uint32_t>(mesh.GetVertizes().size()), 1, 0);
+		commandBuffer->BindVertexBuffer({ mesh.GetVertexBuffer() }, 0, 1);
+		commandBuffer->BindPipeline(mesh.GetGeomPipeline());
+		commandBuffer->BindDescriptorSets(mesh.GetGeometryUniformBufferObject(), mesh.GetGeomPipeline());
+		commandBuffer->Draw(static_cast<uint32_t>(mesh.GetVertizes().size()), 1, 0);
 #endif
 	}
 

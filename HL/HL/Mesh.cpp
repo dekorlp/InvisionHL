@@ -48,7 +48,7 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	pipeline->AddShader(vertShaderCode, Invision::SHADER_STAGE_VERTEX_BIT);
 	pipeline->AddShader(fragShaderCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
 	pipeline->AddVertexDescription(verBindingDescr);
-	pipeline->CreatePipeline(instance.GetRenderPass());
+	pipeline->CreatePipeline(instance.GetGeometryRenderPass());
 	isIndexed = true;
 
 	// Deferred Shadow Shading
@@ -73,7 +73,7 @@ Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<
 	geomPipeline->AddShader(geomShaderNormalCode, Invision::SHADER_STAGE_GEOMETRY_BIT);
 	geomPipeline->AddShader(fragShaderNormalCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
 	geomPipeline->AddVertexDescription(verBindingDescr);
-	geomPipeline->CreatePipeline(instance.GetRenderPass());
+	geomPipeline->CreatePipeline(instance.GetDeferredRenderPass());
 
 
 	
