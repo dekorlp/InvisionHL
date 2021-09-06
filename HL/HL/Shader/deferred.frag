@@ -37,6 +37,8 @@ layout(set = 0, binding = 6) uniform GeneralUniformBufferObject {
 	vec3 viewPos;
 } genUbo;
 
+const int NUM_LIGHTS = 8;
+
 float LinearizeDepth(float depth)
 {
   float n = 1.0; // camera z near
@@ -103,30 +105,45 @@ void main() {
 		{
 			// src: https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
 			
+			
+			
+			
 			vec3 FragPos = texture(texPosition, textureCord).rgb;
-		
 			vec3 color = texture(texAlbedo, textureCord).rgb;
 			vec3 normal = texture(texNormal, textureCord).rgb;
+			
+			
+			
+			vec3 viewDir = normalize(genUbo.viewPos - FragPos);
 			
 			// ambient
 			float ambientStrength = 0.1f;
 			vec3 ambient = ambientStrength * lUbo.lights[0].color.xyz;
+			vec3 result = ambient;
+			
+			for(int i = 0; i < NUM_LIGHTS; ++i)
+			{
+				
 
-			// diffuse
-			vec3 norm = normalize(normal);
-			vec3 lightDir = normalize(lUbo.lights[0].position.xyz - FragPos);
-			float diff = max(dot(norm, lightDir), 0.0f);
-			vec3 diffuse = diff * lUbo.lights[0].color.xyz;
-	
-			// specular
-			float specularStrength = 0.5;
-			vec3 viewDir = normalize(genUbo.viewPos - FragPos);
-			vec3 reflectDir = reflect(-lightDir, norm);
-			float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-			vec3 specular = specularStrength * spec * lUbo.lights[0].color.xyz;  
-	
-			vec3 result = (ambient + diffuse + specular) * color;
-	
+				// diffuse
+				vec3 norm = normalize(normal);
+				vec3 lightDir = normalize(lUbo.lights[i].position.xyz - FragPos);
+				float diff = max(dot(norm, lightDir), 0.0f);
+				vec3 diffuse = diff * color * lUbo.lights[i].color.xyz;
+		
+				// specular
+				float specularStrength = 0.5;
+				
+				vec3 halfayDir = normalize(lightDir + viewDir);
+				float spec = pow(max(dot(norm, halfayDir), 0.0), 16);
+				vec3 specular = specularStrength * spec * lUbo.lights[i].color.xyz;  
+				
+				result += diffuse + specular;
+				
+			
+			}
+			
+			
 			outColor = vec4(result, 1.0);
 			
 			
@@ -136,37 +153,80 @@ void main() {
 		{
 			// src: https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
 		
-			
 			vec3 FragPos = texture(texPosition, textureCord).rgb;
-		
 			vec3 color = texture(texAlbedo, textureCord).rgb;
 			vec3 normal = texture(texNormal, textureCord).rgb;
+			
+			
+			
+			vec3 viewDir = normalize(genUbo.viewPos - FragPos);
 			
 			// ambient
 			float ambientStrength = 0.1f;
 			vec3 ambient = ambientStrength * lUbo.lights[0].color.xyz;
+			vec3 result = ambient;
+			
+			for(int i = 0; i < NUM_LIGHTS; ++i)
+			{
+				
+
+				// diffuse
+				vec3 norm = normalize(normal);
+				vec3 lightDir = normalize(lUbo.lights[i].position.xyz - FragPos);
+				float diff = max(dot(norm, lightDir), 0.0f);
+				vec3 diffuse = diff * color * lUbo.lights[i].color.xyz;
+		
+				// specular
+				float specularStrength = 0.5;
+				
+				vec3 halfayDir = normalize(lightDir + viewDir);
+				float spec = pow(max(dot(norm, halfayDir), 0.0), 16);
+				vec3 specular = specularStrength * spec * lUbo.lights[i].color.xyz;  
+				
+				float shadow = ShadowCalculation( lUbo.lights[i].lightSpaceMatrix  * vec4(FragPos, 1.0), FragPos, normal);
+				result += (diffuse + specular) *(1.0 - 0.99 * shadow) ;
+				
+			
+			}
+			
+			
+			outColor = vec4(result, 1.0);
+			break;
+		
+		
+		
+		
+			
+			//vec3 FragPos = texture(texPosition, textureCord).rgb;
+		
+			//vec3 color = texture(texAlbedo, textureCord).rgb;
+			//vec3 normal = texture(texNormal, textureCord).rgb;
+			
+			// ambient
+			//float ambientStrength = 0.1f;
+			//vec3 ambient = ambientStrength * lUbo.lights[0].color.xyz;
 
 			// diffuse
-			vec3 norm = normalize(normal);
-			vec3 lightDir = normalize(lUbo.lights[0].position.xyz - FragPos);
-			float diff = max(dot(norm, lightDir), 0.0f);
-			vec3 diffuse = diff * lUbo.lights[0].color.xyz;
+			//vec3 norm = normalize(normal);
+			//vec3 lightDir = normalize(lUbo.lights[0].position.xyz - FragPos);
+			//float diff = max(dot(norm, lightDir), 0.0f);
+			//vec3 diffuse = diff * lUbo.lights[0].color.xyz;
 	
 			// specular
-			float specularStrength = 0.5;
-			vec3 viewDir = normalize(genUbo.viewPos - FragPos);
-			vec3 reflectDir = reflect(-lightDir, norm);
-			float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-			vec3 specular = specularStrength * spec * lUbo.lights[0].color.xyz;  
+			//float specularStrength = 0.5;
+			//vec3 viewDir = normalize(genUbo.viewPos - FragPos);
+			//vec3 reflectDir = reflect(-lightDir, norm);
+			//float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+			//vec3 specular = specularStrength * spec * lUbo.lights[0].color.xyz;  
 	
 			// calculate light and shadow
-			float shadow = ShadowCalculation( lUbo.lights[0].lightSpaceMatrix  * vec4(FragPos, 1.0), FragPos, normal);
-			vec3 lightning = (ambient + (1.0 - 0.99 * shadow) * (diffuse + specular)) * color; 
+			//float shadow = ShadowCalculation( lUbo.lights[0].lightSpaceMatrix  * vec4(FragPos, 1.0), FragPos, normal);
+			//vec3 lightning = (ambient + (1.0 - 0.99 * shadow) * (diffuse + specular)) * color; 
 	
 			//outColor = vec4((ambient + diffuse + specular)  * color, 1.0);
-			outColor = vec4(lightning, 1.0);
+			//outColor = vec4(lightning, 1.0);
 		
-			break;
+			//break;
 		}
 			
 		case 6: // debug shadow Map
