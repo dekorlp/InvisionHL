@@ -16,14 +16,14 @@ layout(binding = 4) uniform OptionsUniformBuffer {
 
 struct Light
 {
+	mat4 lightSpaceMatrix;
 	vec4 position;
 	vec4 color;
 	float strength;
-	mat4 lightSpaceMatrix;
 	float direction;
-	//float falloffstart;
-	//float falloffEnd;
-	//float spotPower;
+	float falloffstart;
+	float falloffEnd;
+	float spotPower;
 };
 
 layout(set = 0, binding = 5) uniform LightUbo {

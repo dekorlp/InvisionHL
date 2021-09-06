@@ -65,7 +65,7 @@ struct GeneralUbo {
 	
 };
 
-#define INVISION_HL_DRAW_NORMALS
+//#define INVISION_HL_DRAW_NORMALS
 
 class GraphicsInstance
 {
