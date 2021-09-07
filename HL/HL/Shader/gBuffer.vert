@@ -24,11 +24,13 @@ layout(location = 2) in vec3 inNormal;
 layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec3 fragPos;
 layout(location = 2) out vec3 fragNormal;
+layout(location = 3) out vec3 fragMaterial;
 
 void main() {
 	vec4 worldPos = ubo.model * vec4(inPosition, 1.0);
 	fragPos = worldPos.xyz;
 	fragColor = inColor;
+	fragMaterial.x = ubo.material.shininess;
 	//fragTexCoord = inTexCoord;
 	fragNormal = vec3(transpose(inverse(ubo.model))* vec4(inNormal, 1.0)).xyz;
 

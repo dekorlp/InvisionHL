@@ -34,18 +34,21 @@ void GraphicsInstance::Init(HWND hwnd, int width, int height)
 		mGBuffer.positionsAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
 		mGBuffer.albedoAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
 		mGBuffer.normalAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
+		mGBuffer.materialAttachment = graphicsInstance->CreateColorAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE, Invision::FORMAT_R16G16B16A16_SFLOAT);
 		mGBuffer.depthAttachment = graphicsInstance->CreateDepthAttachment(FRAMEBUFFER_SIZE, FRAMEBUFFER_SIZE);
 
 		// gPass Sampler Settings
 		mGBuffer.positionsAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
 		mGBuffer.albedoAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
 		mGBuffer.normalAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
+		mGBuffer.materialAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
 		mGBuffer.depthAttachment->CreateTextureSampler(Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_FILTER_MODE_NEAREST, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP, Invision::SAMPLER_ADDRESS_MODE_CLAMP);
 
 		// gPass to RenderPass
 		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_COLOR, mGBuffer.positionsAttachment); // world Space Positions
 		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_COLOR, mGBuffer.normalAttachment); // Normals
 		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_COLOR, mGBuffer.albedoAttachment); // Albedo
+		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_COLOR, mGBuffer.materialAttachment); // Material
 		mGBuffer.gRenderPass->AddAttachment(Invision::ATTACHMENT_TYPE_DEPTH, mGBuffer.depthAttachment); // Depth
 		mGBuffer.gRenderPass->CreateRenderPass();
 
@@ -79,9 +82,10 @@ void GraphicsInstance::Init(HWND hwnd, int width, int height)
 			.CreateImageBinding(0, 1, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mGBuffer.normalAttachment)
 			.CreateImageBinding(0, 2, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mGBuffer.positionsAttachment)
 			.CreateImageBinding(0, 3, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mSBuffer.sDepthAttachment)
-			.CreateUniformBinding(0, 4, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(UniformOptionsBuffer))
-			.CreateUniformBinding(0, 5, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(LightUbo) +(sizeof(SLight) *8))
-			.CreateUniformBinding(0, 6, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
+			.CreateImageBinding(0, 4, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, mGBuffer.materialAttachment)
+			.CreateUniformBinding(0, 5, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(UniformOptionsBuffer))
+			.CreateUniformBinding(0, 6, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(LightUbo) +(sizeof(SLight) *8))
+			.CreateUniformBinding(0, 7, 1, Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
 
 		auto deferredVertShaderCode = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/deferred.vert.spv"));
 		auto deferredFragShaderCode = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/deferred.frag.spv"));
@@ -150,8 +154,8 @@ void GraphicsInstance::Render()
 	UniformOptionsBuffer optionsBuffer;
 	optionsBuffer.option = 5;
 
-	DeferredUniformBuffer->UpdateUniform(&optionsBuffer, sizeof(UniformOptionsBuffer), 0, 4);
-	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo) + (sizeof(SLight) * 8), 0, 5);
+	DeferredUniformBuffer->UpdateUniform(&optionsBuffer, sizeof(UniformOptionsBuffer), 0, 5);
+	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo) + (sizeof(SLight) * 8), 0, 6);
 
 
 	renderer->Draw(mGBuffer.gCommandbuffer);

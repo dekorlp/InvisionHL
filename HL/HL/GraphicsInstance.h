@@ -27,6 +27,7 @@ struct GBuffer
 	std::shared_ptr <Invision::ITexture> positionsAttachment;
 	std::shared_ptr <Invision::ITexture> albedoAttachment;
 	std::shared_ptr <Invision::ITexture> normalAttachment;
+	std::shared_ptr <Invision::ITexture> materialAttachment;
 	std::shared_ptr <Invision::ITexture> depthAttachment;
 };
 

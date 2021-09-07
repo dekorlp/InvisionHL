@@ -8,16 +8,19 @@ Mesh::Mesh()
 
 }
 
-Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices)
+Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, float shininess)
 {
 	mVertices = vertices;
 	isIndexed = false;
+	mShininess = shininess;
 }
 
-Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<Index> indices, Invision::PolygonMode polygonMode, Invision::PrimitiveTopology primitiveTopology, float lineWidth)
+Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<Index> indices, float shininess, Invision::PolygonMode polygonMode, Invision::PrimitiveTopology primitiveTopology, float lineWidth)
 {
 	mVertices = vertices;
 	mIndizes = indices;
+	mShininess = shininess;
+
 	std::shared_ptr <Invision::IGraphicsInstance> graphicsInstance = instance.GetGraphicsInstance();
 	// user code
 	vertexBuffer = graphicsInstance->CreateVertexBuffer();
@@ -84,6 +87,8 @@ void Mesh::UpdateUniform(DrawingInstance& instance, glm::mat4 modelMatrix)
 {
 	// update current mesh
 	UniformBufferObject ubo = {};
+
+	ubo.mat.shininess = mShininess;
 
 	if (parent)
 	{
@@ -163,7 +168,7 @@ std::shared_ptr<Invision::IIndexBuffer> Mesh::GetIndexBuffer()
 	return indexBuffer;
 } 
 
-Mesh Mesh::CreateCube(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color)
+Mesh Mesh::CreateCube(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color, float shininess)
 {
 	// https://github.com/jjuiddong/Introduction-to-3D-Game-Programming-With-DirectX11/blob/master/Common/GeometryGenerator.cpp#L26
 
@@ -237,10 +242,10 @@ Mesh Mesh::CreateCube(DrawingInstance& instance, float width, float height, floa
 
 	
 
-	return Mesh(instance, vertices, indices);
+	return Mesh(instance, vertices, indices, shininess);
 }
 
-Mesh Mesh::CreatePyramid(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color)
+Mesh Mesh::CreatePyramid(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color, float shininess)
 {
 	width = width * 0.5f;
 	height = height * 0.5f;
@@ -292,10 +297,10 @@ Mesh Mesh::CreatePyramid(DrawingInstance& instance, float width, float height, f
 
 	};
 
-	return Mesh(instance, vertices, indices);
+	return Mesh(instance, vertices, indices, shininess);
 }
 
-Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float topRadius, float height, uint32_t sliceCount, uint32_t stackCount, glm::vec3 color)
+Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float topRadius, float height, uint32_t sliceCount, uint32_t stackCount, glm::vec3 color, float shininess)
 {
 	// 3D Game Programming with DirectX 12 - P. 275ff 
 	std::vector<Vertex> vertices;
@@ -431,10 +436,10 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 		indices.push_back(baseIndex + i);
 	}
 
-	return Mesh(instance, vertices, indices);
+	return Mesh(instance, vertices, indices, shininess);
 }
 
-Mesh Mesh::CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t subDivisions, glm::vec3 color)
+Mesh Mesh::CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t subDivisions, glm::vec3 color, float shininess)
 {
 	// 3D Game Programming with DirectX 12 - P. 280f
 	// https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
@@ -505,10 +510,10 @@ Mesh Mesh::CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t sub
 		vertices[i].tangent =  glm::normalize(T);
 	}
 
-	return Mesh(instance, vertices, indices);
+	return Mesh(instance, vertices, indices, shininess);
 }
 
-Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int slices, unsigned int stacks, glm::vec3 color)
+Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int slices, unsigned int stacks, glm::vec3 color, float shininess)
 {
 	// https://github.com/jjuiddong/Introduction-to-3D-Game-Programming-With-DirectX11/blob/master/Common/GeometryGenerator.h
 	// https://github.com/jjuiddong/Introduction-to-3D-Game-Programming-With-DirectX11/blob/master/Common/GeometryGenerator.cpp
@@ -603,10 +608,10 @@ Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int sl
 		indices.push_back(baseIndex + i + 1);
 	}
 
-	return Mesh(instance, vertices, indices);
+	return Mesh(instance, vertices, indices, shininess);
 }
 
-Mesh Mesh::CreatePlane(DrawingInstance& instance, float width, float depth, glm::vec3 color)
+Mesh Mesh::CreatePlane(DrawingInstance& instance, float width, float depth, glm::vec3 color, float shininess)
 {
 	width = width * 0.5f;
 	depth = depth * 0.5f;
@@ -623,7 +628,7 @@ Mesh Mesh::CreatePlane(DrawingInstance& instance, float width, float depth, glm:
 		2, 3, 0
 	};
 
-	return Mesh(instance, vertices, indices);
+	return Mesh(instance, vertices, indices, shininess);
 }
 
 Mesh Mesh::CreateGrid(DrawingInstance& instance, float width, float depth, unsigned int m, unsigned int n, glm::vec3 color, float lineWidth)
@@ -684,7 +689,7 @@ Mesh Mesh::CreateGrid(DrawingInstance& instance, float width, float depth, unsig
 			k += 8;
 		}
 	}
-	return Mesh(instance, vertices, indices, Invision::POLYGON_MODE_LINE, Invision::PRIMITIVE_TOPOLOGY_LINE_LIST, lineWidth);
+	return Mesh(instance, vertices, indices, 16.0f, Invision::POLYGON_MODE_LINE, Invision::PRIMITIVE_TOPOLOGY_LINE_LIST, lineWidth);
 }
 
 void Mesh::Subdivide(std::vector<Vertex> &vertizes, std::vector<uint32_t> &indizes)

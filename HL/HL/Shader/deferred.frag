@@ -5,12 +5,13 @@ layout(binding = 0) uniform sampler2D texAlbedo;
 layout(binding = 1) uniform sampler2D texNormal;
 layout(binding = 2) uniform sampler2D texPosition;
 layout(binding = 3) uniform sampler2D shadowMap;
+layout(binding = 4) uniform sampler2D texMaterial;
 
 layout(location = 1) in vec2 textureCord;
 
 layout(location = 0) out vec4 outColor;
 
-layout(binding = 4) uniform OptionsUniformBuffer {
+layout(binding = 5) uniform OptionsUniformBuffer {
 	int option;
 } uob;
 
@@ -26,12 +27,12 @@ struct Light
 	float spotPower;
 };
 
-layout(set = 0, binding = 5) uniform LightUbo {
+layout(set = 0, binding = 6) uniform LightUbo {
 	Light lights[8];
 	int countLights;
 } lUbo;
 
-layout(set = 0, binding = 6) uniform GeneralUniformBufferObject {
+layout(set = 0, binding = 7) uniform GeneralUniformBufferObject {
 	mat4 view;
 	mat4 proj;
 	vec3 viewPos;
@@ -118,6 +119,7 @@ void main() {
 			vec3 FragPos = texture(texPosition, textureCord).rgb;
 			vec3 color = texture(texAlbedo, textureCord).rgb;
 			vec3 normal = texture(texNormal, textureCord).rgb;
+			vec4 mat = texture(texMaterial, textureCord);
 			
 			
 			
@@ -163,7 +165,7 @@ void main() {
 			vec3 FragPos = texture(texPosition, textureCord).rgb;
 			vec3 color = texture(texAlbedo, textureCord).rgb;
 			vec3 normal = texture(texNormal, textureCord).rgb;
-			
+			vec4 mat = texture(texMaterial, textureCord);
 			
 			
 			vec3 viewDir = normalize(genUbo.viewPos - FragPos);
@@ -187,7 +189,7 @@ void main() {
 				float specularStrength = 0.5;
 				
 				vec3 halfayDir = normalize(lightDir + viewDir);
-				float spec = pow(max(dot(norm, halfayDir), 0.0), 16);
+				float spec = pow(max(dot(norm, halfayDir), 0.0), mat.x);
 				vec3 specular = specularStrength * spec * lUbo.lights[i].color.xyz;  
 				
 				float shadow = ShadowCalculation( lUbo.lights[i].lightSpaceMatrix  * vec4(FragPos, 1.0), FragPos, normal, i);

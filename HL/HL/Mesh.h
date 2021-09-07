@@ -39,8 +39,8 @@ class Mesh
 {
 public:
 	Mesh();
-	Mesh(DrawingInstance& instance, std::vector<Vertex> vertices);
-	Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<Index> indices, Invision::PolygonMode polygonMode = Invision::POLYGON_MODE_FILL, Invision::PrimitiveTopology primitiveTopology = Invision::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, float lineWidth = 1.0);
+	Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, float shininess);
+	Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<Index> indices, float shininess = 16.0, Invision::PolygonMode polygonMode = Invision::POLYGON_MODE_FILL, Invision::PrimitiveTopology primitiveTopology = Invision::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, float lineWidth = 1.0);
 
 	std::vector<Vertex> GetVertizes();
 	std::vector<Index> GetIndizes();
@@ -56,12 +56,12 @@ public:
 	void SetModelMatrix(glm::mat4 model);
 	glm::mat4 GetModelMatrix();
 
-	static Mesh CreateCube(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color);
-	static Mesh CreatePyramid(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color);
-	static Mesh CreateCylinder(DrawingInstance& instance, float bottomRadius, float topRadius, float height, uint32_t sliceCount, uint32_t stackCount, glm::vec3 color);
-	static Mesh CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t subDivisions, glm::vec3 color);
-	static Mesh CreateSphere(DrawingInstance& instance, float radius, unsigned int stacks, unsigned int slices, glm::vec3 color);
-	static Mesh CreatePlane(DrawingInstance& instance, float width, float depth, glm::vec3 color);
+	static Mesh CreateCube(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color, float shininess = 16.0);
+	static Mesh CreatePyramid(DrawingInstance& instance, float width, float height, float depth, glm::vec3 color, float shininess = 16.0);
+	static Mesh CreateCylinder(DrawingInstance& instance, float bottomRadius, float topRadius, float height, uint32_t sliceCount, uint32_t stackCount, glm::vec3 color, float shininess = 16.0);
+	static Mesh CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t subDivisions, glm::vec3 color, float shininess = 16.0);
+	static Mesh CreateSphere(DrawingInstance& instance, float radius, unsigned int stacks, unsigned int slices, glm::vec3 color, float shininess = 16.0);
+	static Mesh CreatePlane(DrawingInstance& instance, float width, float depth, glm::vec3 color, float shininess = 16.0);
 	static Mesh CreateGrid(DrawingInstance& instance, float width, float depth, unsigned int m, unsigned int n, glm::vec3 color, float lineWidth = 1.0f);
 
 	void AddChildMesh(Mesh& mesh)
@@ -97,6 +97,7 @@ private:
 	std::vector<Index> mIndizes;
 	bool isIndexed;
 	glm::mat4 mModelMat;
+	float mShininess;
 
 	std::vector<Mesh*> mChildMeshes;
 	Mesh* parent = nullptr;
