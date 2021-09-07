@@ -26,8 +26,6 @@ struct Vertex {
 typedef uint32_t Index;
 
 struct Material {
-	float diffuse;
-	float specular;
 	float shininess;
 };
 
