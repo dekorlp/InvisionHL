@@ -47,10 +47,17 @@ float LinearizeDepth(float depth)
   return (2.0 * n) / (f + n - z * (f - n));	
 }
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 FragPos, vec3 Normal)
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 FragPos, vec3 Normal, int lightIndex)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	
+	float lsvdepth = texture(shadowMap, projCoords.xy).r;
+	float vdepth =  fragPosLightSpace.z / lUbo.lights[lightIndex].position.z;
+	
+	if(vdepth <= lsvdepth)
+		return 0;
+	
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
@@ -59,7 +66,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 FragPos, vec3 Normal)
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
     vec3 normal = normalize(Normal);
-    vec3 lightShadowDir = normalize(lUbo.lights[0].position.xyz - FragPos);
+    vec3 lightShadowDir = normalize(lUbo.lights[lightIndex].position.xyz - FragPos);
     float bias = max(0.05 * (1.0 - dot(normal, lightShadowDir)), 0.005);
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
@@ -183,7 +190,7 @@ void main() {
 				float spec = pow(max(dot(norm, halfayDir), 0.0), 16);
 				vec3 specular = specularStrength * spec * lUbo.lights[i].color.xyz;  
 				
-				float shadow = ShadowCalculation( lUbo.lights[i].lightSpaceMatrix  * vec4(FragPos, 1.0), FragPos, normal);
+				float shadow = ShadowCalculation( lUbo.lights[i].lightSpaceMatrix  * vec4(FragPos, 1.0), FragPos, normal, i);
 				result += (diffuse + specular) *(1.0 - 0.99 * shadow) ;
 				
 			

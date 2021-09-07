@@ -148,7 +148,7 @@ void GraphicsInstance::Render()
 
 	//mGeometryUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
 	UniformOptionsBuffer optionsBuffer;
-	optionsBuffer.option = 4;
+	optionsBuffer.option = 5;
 
 	DeferredUniformBuffer->UpdateUniform(&optionsBuffer, sizeof(UniformOptionsBuffer), 0, 4);
 	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo) + (sizeof(SLight) * 8), 0, 5);
