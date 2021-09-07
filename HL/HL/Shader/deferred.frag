@@ -191,7 +191,7 @@ void main() {
 				vec3 specular = specularStrength * spec * lUbo.lights[i].color.xyz;  
 				
 				float shadow = ShadowCalculation( lUbo.lights[i].lightSpaceMatrix  * vec4(FragPos, 1.0), FragPos, normal, i);
-				result += (diffuse + specular) *(1.0 - 0.99 * shadow) ;
+				result += (diffuse + specular) *(1.0 - 0.75 * shadow) ;
 				
 			
 			}
