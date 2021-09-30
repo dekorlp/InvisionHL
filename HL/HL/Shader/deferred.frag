@@ -38,7 +38,6 @@ layout(set = 0, binding = 7) uniform GeneralUniformBufferObject {
 	vec3 viewPos;
 } genUbo;
 
-const int NUM_LIGHTS = 8;
 
 float LinearizeDepth(float depth)
 {
@@ -130,7 +129,7 @@ void main() {
 			vec3 ambient = ambientStrength * lUbo.lights[0].color.xyz;
 			vec3 result = ambient;
 			
-			for(int i = 0; i < NUM_LIGHTS; ++i)
+			for(int i = 0; i < lUbo.countLights; ++i)
 			{
 				
 
@@ -175,7 +174,7 @@ void main() {
 			vec3 ambient = ambientStrength * lUbo.lights[0].color.xyz;
 			vec3 result = ambient;
 			
-			for(int i = 0; i < NUM_LIGHTS; ++i)
+			for(int i = 0; i < lUbo.countLights; ++i)
 			{
 				
 

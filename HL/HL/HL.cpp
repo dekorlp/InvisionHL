@@ -194,6 +194,11 @@ class App : public InvisionHL
 		LightIndex lgtIndex = instance.AddLight(light);
 		light.SetStrength(8);
 		instance.UpdateLight(light, lgtIndex);
+
+		light1 = Light(glm::vec3(0.0f, -20.0f, 10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		LightIndex lgtIndex1 = instance.AddLight(light1);
+		light1.SetStrength(8);
+		instance.UpdateLight(light1, lgtIndex1);
 	}
 
 	void Init(DrawingInstance& instance) override
@@ -274,6 +279,7 @@ private:
 
 
 	Light light;
+	Light light1;
 
 	glm::mat4 view;
 	glm::mat4 proj;
