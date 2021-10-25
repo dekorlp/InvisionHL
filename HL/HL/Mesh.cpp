@@ -326,7 +326,7 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 			float c = cosf(j*dTheta);
 			float s = sinf(j*dTheta);
 
-			vertex.position = glm::vec3(r*c, r*s, y);
+			vertex.position = glm::vec3(r*c, -y, r*s);
 			vertex.tex.x = (float)j / sliceCount;
 			vertex.tex.y = 1.0f - (float)i / stackCount;
 
@@ -374,18 +374,18 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 		float v = z / height + 0.5f;
 
 		Vertex vert;
-		vert.position = glm::vec3(x, z, y);
-		vert.tex = glm::vec2(x, z);
-		vert.normal = glm::vec3(0.0, 0.0, 1.0);
+		vert.position = glm::vec3(x, -y, z);
+		vert.tex = glm::vec2(u, v);
+		vert.normal = glm::vec3(0.0, -1.0, 0.0);
 		vert.tangent = glm::vec3(1.0, 0.0, 0.0);
 		vert.color = color;
 
 		vertices.push_back(vert);
 	}
 	Vertex TopCenter;
-	TopCenter.position = glm::vec3(0.0f, 0.0f, y);
+	TopCenter.position = glm::vec3(0.0f, -y, 0.0f);
 	TopCenter.color = color;
-	TopCenter.normal = glm::vec3(0.0, 0.0, 1.0);
+	TopCenter.normal = glm::vec3(0.0, -1.0, 0.0);
 	TopCenter.tangent = glm::vec3(1.0, 0.0, 0.0);
 	TopCenter.tex = glm::vec2(0.5f, 0.5f);
 	vertices.push_back(TopCenter);
@@ -410,9 +410,9 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 		float v = z / height + 0.5f;
 
 		Vertex vert;
-		vert.position = glm::vec3(x, z, -y);
+		vert.position = glm::vec3(x, y, z);
 		vert.color = color;
-		vert.normal = glm::vec3(0.0f, 0.0f, -1.0f);
+		vert.normal = glm::vec3(0.0f, 1.0f, 0.0f);
 		vert.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 		vert.tex = glm::vec2(u, v);
 
@@ -420,9 +420,9 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 	}
 
 	Vertex BottomCenter;
-	BottomCenter.position = glm::vec3(0.0f, 0.0f, -y);
+	BottomCenter.position = glm::vec3(0.0f, y, 0.0f);
 	BottomCenter.color = color;
-	BottomCenter.normal = glm::vec3(0.0f, 0.0f, -1.0f);
+	BottomCenter.normal = glm::vec3(0.0f, 1.0f, 0.0f);
 	BottomCenter.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 	BottomCenter.tex = glm::vec2(0.5f, 0.5f);
 	vertices.push_back(BottomCenter);
@@ -503,8 +503,8 @@ Mesh Mesh::CreateGeoSphere(DrawingInstance& instance, float radius, uint32_t sub
 
 		// Partial derivative of P with respect to theta
 		vertices[i].tangent.x = -radius * sinf(phi)*sinf(theta);
-		vertices[i].tangent.y = +radius * sinf(phi)*cosf(theta);
-		vertices[i].tangent.z = 0.0f;
+		vertices[i].tangent.y = 0.0f;
+		vertices[i].tangent.z = +radius * sinf(phi)*cosf(theta);
 
 		glm::vec3 T = vertices[i].tangent;
 		vertices[i].tangent =  glm::normalize(T);
@@ -523,15 +523,15 @@ Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int sl
 	Vertex TopVertex;
 	Vertex BottomVertex;
 
-	TopVertex.position = glm::vec3(0.0f, 0.0f, +radius);
+	TopVertex.position = glm::vec3(0.0f, -radius, 0.0f);
 	TopVertex.color = color;
-	TopVertex.normal = glm::vec3(0.0f, 0.0f, 1.0f);
+	TopVertex.normal = glm::vec3(0.0f, -1.0f, 0.0);
 	TopVertex.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 	TopVertex.tex = glm::vec2(0.0f, 0.0f);
 
-	BottomVertex.position = glm::vec3(0.0f, 0.0f, -radius);
+	BottomVertex.position = glm::vec3(0.0f, radius, 0.0f);
 	BottomVertex.color = color;
-	BottomVertex.normal = glm::vec3(0.0f, 0.0f, -1.0f);
+	BottomVertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
 	BottomVertex.tangent = glm::vec3(1.0f, 0.0f, 0.0f);
 	BottomVertex.tex = glm::vec2(0.0f, 1.0f);
 
@@ -552,12 +552,12 @@ Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int sl
 			
 			// spherical coordinates to cartesian
 			v.position.x = radius * sinf(phi)*cosf(theta);
-			v.position.y = radius * cosf(phi);
+			v.position.y = -(radius * cosf(phi));
 			v.position.z = (radius * sinf(phi) * sinf(theta));
 
 			v.tangent.x = -radius * sinf(phi)*sinf(theta);
-			v.tangent.y = +radius * sinf(phi)*cosf(theta);
-			v.tangent.z = 0.0f;
+			v.tangent.y = 0.0f;
+			v.tangent.z = +radius * sinf(phi)*cosf(theta);
 
 			v.tangent = glm::normalize(v.tangent);
 			v.normal = glm::normalize(v.position);

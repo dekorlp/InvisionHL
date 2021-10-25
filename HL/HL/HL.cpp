@@ -190,7 +190,7 @@ class App : public InvisionHL
 		proj[1][1] *= -1;
 		SetProjectionViewMatrix(view, proj, glm::vec3(2.0f, 2.0f, 2.0f));
 
-		light = Light(glm::vec3(-2.0f, 8.0f, 13.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		light = Light(glm::vec3(3.0f, 6.0f, 15.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		LightIndex lgtIndex = instance.AddLight(light);
 		light.SetStrength(1);
 		instance.UpdateLight(light, lgtIndex);
@@ -244,19 +244,19 @@ class App : public InvisionHL
 		rightFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)));
 		rightFeet.UpdateUniform(instance, rightFeet.GetModelMatrix());
 
-		bottomCylinder.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 1.5f)));
+		bottomCylinder.SetModelMatrix(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 1.5f)), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
 		bottomCylinder.UpdateUniform(instance, bottomCylinder.GetModelMatrix());
 
-		bodyCylinder.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 6.0f)));
+		bodyCylinder.SetModelMatrix(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 6.0f)), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
 		bodyCylinder.UpdateUniform(instance, bodyCylinder.GetModelMatrix());
 
-		topCylinder.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 10.5f)));
+		topCylinder.SetModelMatrix(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 10.5f)), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
 		topCylinder.UpdateUniform(instance, topCylinder.GetModelMatrix());
 
 		head.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 12.4f)));
 		head.UpdateUniform(instance, head.GetModelMatrix());
 
-		nose.SetModelMatrix(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 12.0f)), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+		nose.SetModelMatrix(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 2.0f, 12.0f)), glm::radians(-180.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
 		nose.UpdateUniform(instance, nose.GetModelMatrix());
 
 		leftHand.SetModelMatrix(glm::rotate(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, 8.0f)), glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::radians(-75.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
