@@ -1064,8 +1064,8 @@ validation layer: Device Extension: VK_NVX_image_view_handle (Unknown) version 0
 validation layer: Device Extension: VK_NVX_multiview_per_view_attributes (Unknown) version 0.0.1
 validation layer: Loading layer library C:\VulkanSDK\1.2.154.1\Bin\.\VkLayer_khronos_validation.dll
 validation layer: Loading layer library C:\ProgramData\obs-studio-hook\.\graphics-hook64.dll
-validation layer: Loading layer library C:\Spiele\Overwolf\0.180.0.5\obs\data\obs-plugins\win-capture\.\ow-graphics-hook64.dll
-validation layer: Loading layer library C:\Spiele\Overwolf\0.180.0.5\.\owclient.dll
+validation layer: Loading layer library C:\Spiele\Overwolf\0.181.0.11\obs\data\obs-plugins\win-capture\.\ow-graphics-hook64.dll
+validation layer: Loading layer library C:\Spiele\Overwolf\0.181.0.11\.\owclient.dll
 validation layer: Loading layer library C:\WINDOWS\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_f26df5537af22343\.\nvoglv64.dll
 validation layer: Device Extension: VK_KHR_16bit_storage (C:\WINDOWS\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_f26df5537af22343\.\nvoglv64.dll) version 0.0.1
 validation layer: Device Extension: VK_KHR_8bit_storage (C:\WINDOWS\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_f26df5537af22343\.\nvoglv64.dll) version 0.0.1

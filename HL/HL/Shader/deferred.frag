@@ -129,7 +129,7 @@ void main() {
 			vec3 ambient = ambientStrength * lUbo.lights[0].color.xyz;
 			vec3 result = ambient;
 			
-			for(int i = 0; i < lUbo.countLights; ++i)
+			for(int i = 0; i < lUbo.countLights; i++)
 			{
 				
 

@@ -190,15 +190,15 @@ class App : public InvisionHL
 		proj[1][1] *= -1;
 		SetProjectionViewMatrix(view, proj, glm::vec3(2.0f, 2.0f, 2.0f));
 
-		light = Light(glm::vec3(0.0f, 10.0f, 10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		light = Light(glm::vec3(2.0f, 4.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		LightIndex lgtIndex = instance.AddLight(light);
-		light.SetStrength(8);
+		light.SetStrength(1);
 		instance.UpdateLight(light, lgtIndex);
 
-		light1 = Light(glm::vec3(0.0f, -20.0f, 10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		LightIndex lgtIndex1 = instance.AddLight(light1);
-		light1.SetStrength(8);
-		instance.UpdateLight(light1, lgtIndex1);
+		//light1 = Light(glm::vec3(0.0f, -20.0f, 10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		//LightIndex lgtIndex1 = instance.AddLight(light1);
+		//light1.SetStrength(8);
+		//instance.UpdateLight(light1, lgtIndex1);
 	}
 
 	void Init(DrawingInstance& instance) override
@@ -238,6 +238,9 @@ class App : public InvisionHL
 		leftFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.1f)));
 		leftFeet.UpdateUniform(instance, leftFeet.GetModelMatrix());
 
+		//leftFeet.SetModelMatrix(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.1f)), glm::radians(-200.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+		//leftFeet.UpdateUniform(instance, leftFeet.GetModelMatrix());
+
 		rightFeet.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)));
 		rightFeet.UpdateUniform(instance, rightFeet.GetModelMatrix());
 
@@ -259,8 +262,10 @@ class App : public InvisionHL
 		leftHand.SetModelMatrix(glm::rotate(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 0.0f, 8.0f)), glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::radians(-75.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
 		leftHand.UpdateUniform(instance, leftHand.GetModelMatrix());
 
-		rightHand.SetModelMatrix(glm::rotate(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.0f, 8.0f)), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::radians(75.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+		rightHand.SetModelMatrix(glm::rotate(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.0f, 8.0f)), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::radians(-75.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
 		rightHand.UpdateUniform(instance, rightHand.GetModelMatrix());
+
+		
 	}
 
 
