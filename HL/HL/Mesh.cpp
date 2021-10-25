@@ -262,14 +262,14 @@ Mesh Mesh::CreatePyramid(DrawingInstance& instance, float width, float height, f
 		{ { +0,    +0,     +height },color, { 0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}, {1.0, 0.0f, 0.0f} },
 
 		// LEFT
-		{ { -width, +depth, -height },color, { -1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0, -1.0f, 0.0f} },
-		{ { -width, -depth, -height },color, { -1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, -1.0f, 0.0f} },
-		{ { +0,     +0,     +height },color, { -1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0, -1.0f, 0.0f} },
+		{ { -width, +depth, -height },color, { 1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0, -1.0f, 0.0f} },
+		{ { -width, -depth, -height },color, { 1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, -1.0f, 0.0f} },
+		{ { +0,     +0,     +height },color, { 1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0, -1.0f, 0.0f} },
 
 		// RIGHT
-		{ { +width, +depth, -height },color, { +1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0, 1.0f, 0.0f} },
-		{ { +width, -depth, -height },color, { +1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, 1.0f, 0.0f} },
-		{ { +0,     +0,     +height },color, { +1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0, 1.0f, 0.0f} },
+		{ { +width, +depth, -height },color, { -1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0, 1.0f, 0.0f} },
+		{ { +width, -depth, -height },color, { -1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, 1.0f, 0.0f} },
+		{ { +0,     +0,     +height },color, { -1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0, 1.0f, 0.0f} },
 
 		// BOTTOM
 		{ { -width, +depth, -height },color, { 0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}, {-1.0, 0.0f, 0.0f} },
@@ -330,10 +330,10 @@ Mesh Mesh::CreateCylinder(DrawingInstance& instance, float bottomRadius, float t
 			vertex.tex.x = (float)j / sliceCount;
 			vertex.tex.y = 1.0f - (float)i / stackCount;
 
-			vertex.tangent = glm::vec3(-s, c, 0.0f);
+			vertex.tangent = glm::vec3(-s, 0.0f, -c);
 
 			float dr = bottomRadius - topRadius;
-			glm::vec3 bitangent(dr*c, dr*s, height);
+			glm::vec3 bitangent(dr*c, -height, -(dr*s));
 
 			vertex.color = color;
 			vertex.normal = glm::normalize(glm::cross(vertex.tangent, bitangent));
@@ -553,7 +553,7 @@ Mesh Mesh::CreateSphere(DrawingInstance& instance, float radius, unsigned int sl
 			// spherical coordinates to cartesian
 			v.position.x = radius * sinf(phi)*cosf(theta);
 			v.position.y = radius * cosf(phi);
-			v.position.z = radius * sinf(phi) * sinf(theta);
+			v.position.z = (radius * sinf(phi) * sinf(theta));
 
 			v.tangent.x = -radius * sinf(phi)*sinf(theta);
 			v.tangent.y = +radius * sinf(phi)*cosf(theta);

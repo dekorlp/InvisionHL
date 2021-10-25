@@ -190,7 +190,7 @@ class App : public InvisionHL
 		proj[1][1] *= -1;
 		SetProjectionViewMatrix(view, proj, glm::vec3(2.0f, 2.0f, 2.0f));
 
-		light = Light(glm::vec3(2.0f, 4.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		light = Light(glm::vec3(-2.0f, 8.0f, 13.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		LightIndex lgtIndex = instance.AddLight(light);
 		light.SetStrength(1);
 		instance.UpdateLight(light, lgtIndex);
