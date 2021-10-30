@@ -153,9 +153,20 @@ void GraphicsInstance::Render()
 	//mGeometryUniformBuffer->UpdateUniform(&mGUbo, sizeof(mGUbo), 0, 1);
 	UniformOptionsBuffer optionsBuffer;
 
-	//optionsBuffer.option = 1; // nur farbe
-	optionsBuffer.option = 4; // nur Beleuchtung
-	//optionsBuffer.option = 5; // mit Schatten
+	switch (lightingOption)
+	{
+	case 0: // Diffuse
+		optionsBuffer.option = 1;
+		break;
+	case 1: // Phong
+		optionsBuffer.option = 4;
+		break;
+	case 2: // PhongShadow
+		optionsBuffer.option = 5;
+		break;
+	default:
+		optionsBuffer.option = 1;
+	}
 
 	DeferredUniformBuffer->UpdateUniform(&optionsBuffer, sizeof(UniformOptionsBuffer), 0, 5);
 	DeferredUniformBuffer->UpdateUniform(&mLightUbo, sizeof(LightUbo) + (sizeof(SLight) * 8), 0, 6);
@@ -226,6 +237,11 @@ void GraphicsInstance::UpdateLight(Light& light, LightIndex lightIndex)
 		glm::vec3(0.0f, 1.0f, 0.0f));
 
 	mLightUbo.light[mLightUbo.countLights - 1].lightSpaceMatrix = lightProjection * lightView;
+}
+
+void GraphicsInstance::SetLightingOption(LightingOptions option)
+{
+	this->lightingOption = option;
 }
 
 void GraphicsInstance::BeginCommandBuffer(const int width, const int height)

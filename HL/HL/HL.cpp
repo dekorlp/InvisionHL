@@ -223,6 +223,8 @@ class App : public InvisionHL
 
 	void Render(DrawingInstance& instance, const int width, const int height) override
 	{
+		instance.SetLightingOption(LIGHTING_OPTION_PHONG);
+
 		std::cout << "Render " << std::endl;
 
 		static auto startTime = std::chrono::high_resolution_clock::now();

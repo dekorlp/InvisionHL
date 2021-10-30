@@ -18,6 +18,13 @@ class Light;
 
 struct SLight;
 
+enum LightingOptions
+{
+	LIGHTING_OPTION_DIFFUSE,
+	LIGHTING_OPTION_PHONG,
+	LIGHTING_OPTION_PHONGSHADOW
+};
+
 struct GBuffer
 {
 	//std::shared_ptr <Invision::IPipeline> gPipeline;
@@ -80,6 +87,7 @@ class GraphicsInstance
 		bool SubmitFrame(const int width, const int height);
 		void SetProjectionViewMatrix(glm::mat4 view, glm::mat4 proj, glm::vec3 cameraPosition);
 		LightIndex AddLight(Light& light);
+		void SetLightingOption(LightingOptions option);
 		void UpdateLight(Light& light, LightIndex lightIndex);
 
 		void BeginCommandBuffer(const int width, const int height);
@@ -149,6 +157,8 @@ class GraphicsInstance
 
 		std::shared_ptr <Invision::IPipeline> pipeline;
 		std::shared_ptr <Invision::IUniformBuffer> DeferredUniformBuffer;
+
+		LightingOptions lightingOption;
 
 		struct UniformOptionsBuffer {
 			int option;
@@ -221,6 +231,11 @@ public:
 	LightIndex AddLight(Light& light)
 	{
 		return mParentAddr->AddLight(light);
+	}
+
+	void SetLightingOption(LightingOptions option)
+	{
+		mParentAddr->SetLightingOption(option);
 	}
 
 	void UpdateLight(Light& light, LightIndex lightIndex)
