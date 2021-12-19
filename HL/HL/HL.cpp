@@ -20,7 +20,7 @@
 #include "InvisionHL.h"
 
 // default App Example
-/*class App : public InvisionHL
+class App : public InvisionHL
 {
 
 	void PreInit(DrawingInstance& instance, int width, int height)
@@ -57,8 +57,8 @@
 
 		//quad = Mesh::CreatePyramid(instance, 1, 2, 1);// Mesh(instance, vertices, indices);
 
-		quad = Mesh::CreateCube(instance, 1, 1, 1);
-		quad2 = Mesh::CreatePyramid(instance, 2, 1, 1);
+		quad = Mesh::CreateCube(instance, 1, 1, 1, glm::vec3(1.0f, 0.0f, 0.0f));
+		quad2 = Mesh::CreatePyramid(instance, 2, 1, 1, glm::vec3(1.0f, 1.0f, 1.0f));
 
 		quad.AddChildMesh(quad2);
 
@@ -86,6 +86,8 @@
 
 	void Render(DrawingInstance& instance, const int width, const int height) override
 	{	
+		instance.SetLightingOption(LIGHTING_OPTION_DIFFUSE);
+
 		std::cout << "Render " << std::endl;
 
 		static auto startTime = std::chrono::high_resolution_clock::now();
@@ -101,11 +103,11 @@
 
 		
 		// chield
-		quad2.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-4.0f, 0.0f, 0.0f)));
+		quad2.SetModelMatrix(glm::translate(glm::mat4(1.0f), glm::vec3(-4.0f, 0.0f, 2.0f)));
 		quad2.UpdateUniform(instance, quad2.GetModelMatrix());
 
 		// parent
-		quad.SetModelMatrix(glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
+		quad.SetModelMatrix(glm::translate(glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(-1.5f, 0.0f, 0.0f)));
 		quad.UpdateUniform(instance, quad.GetModelMatrix());
 
 	}
@@ -121,8 +123,24 @@ private:
 	glm::mat4 proj;
 
 	
-};*/
+};
 
+int main()
+{
+	App app;
+
+	try {
+		app.run(1024, 768, "Vulkan Window");
+	}
+	catch (const std::exception& e) {
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
+}
+
+/*
 // Pinguin Example
 class App : public InvisionHL
 {
@@ -223,7 +241,7 @@ class App : public InvisionHL
 
 	void Render(DrawingInstance& instance, const int width, const int height) override
 	{
-		instance.SetLightingOption(LIGHTING_OPTION_PHONG);
+		instance.SetLightingOption(LIGHTING_OPTION_PHONGSHADOW);
 
 		std::cout << "Render " << std::endl;
 
@@ -309,3 +327,4 @@ int main()
 
 	return EXIT_SUCCESS;
 }
+*/
