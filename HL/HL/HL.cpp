@@ -26,7 +26,7 @@ class App : public InvisionHL
 	void PreInit(DrawingInstance& instance, int width, int height)
 	{
 		// With Indices
-		const std::vector<Vertex> vertices = {
+		const std::vector<Vertex> verticesWithIndices = {
 			{ { -0.5f, -0.5f, 0.0f },{ 1.0f, 0.0f, 0.0f } },
 			{ { 0.5f, -0.5f, 0.0f },{ 0.0f, 1.0f, 0.0f } },
 			{ { 0.5f, 0.5f, 0.0f },{ 0.0f, 0.0f, 1.0f } },
@@ -63,28 +63,11 @@ class App : public InvisionHL
 
 		std::cout << "Init called" << std::endl;
 		
-		// Grid
-		//quad = Mesh::CreateGrid(instance, 10.f, 10.f, 10, 10, glm::vec3(1.0f, 0.0f, 0.0f));
+		// Without indices
+		//quad = Mesh(instance, verticesWithoutIndices);
 
-		// Plane
-		//quad = Mesh::CreatePlane(instance, 2.f, 2.f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		// Sphere
-		//quad = Mesh::CreateSphere(instance, 0.5f, 50, 50, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		// GeoSphere
-		//quad = Mesh::CreateGeoSphere(instance, 0.5f, 2.5f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		// Cylinder
-		//quad = Mesh::CreateCylinder(instance, 0.5f, 0.3f, 2.0f, 20, 20, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		// Pyramid
-		//quad = Mesh::CreatePyramid(instance, 1, 2, 1, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		quad = Mesh(instance, verticesWithoutIndices, 1.0f);
-
-		// Cube
-		//quad = Mesh::CreateCube(instance, 1, 1, 1, glm::vec3(1.0f, 0.0f, 0.0f));
+		// With indices 
+		quad = Mesh(instance, verticesWithIndices, indices);
 
 
 		view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
