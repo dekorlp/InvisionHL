@@ -8,11 +8,67 @@ Mesh::Mesh()
 
 }
 
-Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, float shininess)
+Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, float shininess, Invision::PolygonMode polygonMode, Invision::PrimitiveTopology primitiveTopology, float lineWidth)
 {
 	mVertices = vertices;
-	isIndexed = false;
 	mShininess = shininess;
+
+	std::shared_ptr <Invision::IGraphicsInstance> graphicsInstance = instance.GetGraphicsInstance();
+	// user code
+	vertexBuffer = graphicsInstance->CreateVertexBuffer();
+	pipeline = graphicsInstance->CreatePipeline(&Invision::PipelineProperties(primitiveTopology, polygonMode, Invision::CULL_MODE_NONE, Invision::FRONT_FACE_COUNTER_CLOCKWISE, lineWidth));
+	std::shared_ptr<Invision::IVertexBindingDescription> verBindingDescr = graphicsInstance->CreateVertexBindingDescription();
+	verBindingDescr->CreateVertexBinding(0, sizeof(Vertex), Invision::VERTEX_INPUT_RATE_VERTEX)
+		->CreateAttribute(0, Invision::FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position))
+		.CreateAttribute(1, Invision::FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color))
+		.CreateAttribute(2, Invision::FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal));
+
+	vertexBuffer->CreateBuffer(vertices.data(), sizeof(vertices[0]) * vertices.size(), 0, verBindingDescr);
+
+	
+
+	// Create Uniform Buffer
+	mGenUniformBuffer = graphicsInstance->CreateUniformBuffer();
+	mGenUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
+		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
+
+	mGeometryUniformBuffer = graphicsInstance->CreateUniformBuffer();
+	mGeometryUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_GEOMETRY_BIT, sizeof(UniformBufferObject))
+		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT | Invision::SHADER_STAGE_GEOMETRY_BIT | Invision::SHADER_STAGE_FRAGMENT_BIT, sizeof(GeneralUbo)).CreateUniformBuffer();
+
+	auto vertShaderCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/gBuffer.vert.spv");
+	auto fragShaderCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/gBuffer.frag.spv");
+	pipeline->AddUniformBuffer(mGenUniformBuffer);
+	pipeline->AddShader(vertShaderCode, Invision::SHADER_STAGE_VERTEX_BIT);
+	pipeline->AddShader(fragShaderCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
+	pipeline->AddVertexDescription(verBindingDescr);
+	pipeline->CreatePipeline(instance.GetGeometryRenderPass());
+	isIndexed = false;
+
+	// Deferred Shadow Shading
+	mShadowUniformBuffer = graphicsInstance->CreateUniformBuffer();
+	mShadowUniformBuffer->CreateUniformBinding(0, 0, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(UniformBufferObject))
+		.CreateUniformBinding(0, 1, 1, Invision::SHADER_STAGE_VERTEX_BIT, sizeof(LightUbo) + (sizeof(SLight) * 8))
+		.CreateUniformBuffer();
+	mShadowPipeline = graphicsInstance->CreatePipeline();
+	mShadowPipeline->AddUniformBuffer(mShadowUniformBuffer);
+	auto vertShaderCode2 = readFile(std::string("C:/Repository/InvisionHL/HL/HL/Shader/shadow.vert.spv"));
+	mShadowPipeline->AddShader(vertShaderCode2, Invision::SHADER_STAGE_VERTEX_BIT);
+	mShadowPipeline->AddVertexDescription(verBindingDescr);
+	mShadowPipeline->CreatePipeline(instance.GetShadowRenderPass());
+
+	// Create geometry Shader Pipeline
+	auto vertShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.vert.spv");
+	auto geomShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.geom.spv");
+	auto fragShaderNormalCode = readFile("C:/Repository/InvisionHL/HL/HL/Shader/DebugGeom/normal.frag.spv");
+	geomPipeline = graphicsInstance->CreatePipeline(&Invision::PipelineProperties(Invision::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, Invision::POLYGON_MODE_FILL, Invision::CULL_MODE_FRONT_BIT, Invision::FRONT_FACE_COUNTER_CLOCKWISE, 1.0f));
+	geomPipeline->AddUniformBuffer(mGeometryUniformBuffer);
+	geomPipeline->AddShader(vertShaderNormalCode, Invision::SHADER_STAGE_VERTEX_BIT);
+	geomPipeline->AddShader(geomShaderNormalCode, Invision::SHADER_STAGE_GEOMETRY_BIT);
+	geomPipeline->AddShader(fragShaderNormalCode, Invision::SHADER_STAGE_FRAGMENT_BIT);
+	geomPipeline->AddVertexDescription(verBindingDescr);
+	geomPipeline->CreatePipeline(instance.GetDeferredRenderPass());
+
 }
 
 Mesh::Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<Index> indices, float shininess, Invision::PolygonMode polygonMode, Invision::PrimitiveTopology primitiveTopology, float lineWidth)

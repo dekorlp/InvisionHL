@@ -39,7 +39,7 @@ class Mesh
 {
 public:
 	Mesh();
-	Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, float shininess);
+	Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, float shininess = 16.0, Invision::PolygonMode polygonMode = Invision::POLYGON_MODE_FILL, Invision::PrimitiveTopology primitiveTopology = Invision::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, float lineWidth = 1.0);
 	Mesh(DrawingInstance& instance, std::vector<Vertex> vertices, std::vector<Index> indices, float shininess = 16.0, Invision::PolygonMode polygonMode = Invision::POLYGON_MODE_FILL, Invision::PrimitiveTopology primitiveTopology = Invision::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, float lineWidth = 1.0);
 
 	std::vector<Vertex> GetVertizes();
